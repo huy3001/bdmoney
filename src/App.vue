@@ -47,7 +47,11 @@
 
                 <b-row>
                     <b-col cols="12">
-                        <b-alert show variant="danger">
+                        <b-alert show variant="danger" v-if="alert">
+                            Vui lòng chọn ngày bạn muốn tìm
+                        </b-alert>
+
+                        <b-alert show variant="danger" v-if="empty">
                             Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
                         </b-alert>
                         
@@ -175,13 +179,32 @@
 </template>
 
 <script>
+import axios from 'axios';
 import HelloWorld from "./components/HelloWorld.vue";
+
+var dataList = [];
+
+function parseData(entries) {
+    entries.forEach((value) => {
+        var entry = {
+            'day': value.gsx$ngày.$t,
+            'month': value.gsx$tháng.$t,
+            'year': value.gsx$nămsinh.$t.split('-'),
+            'money': value.gsx$mệnhgiá.$t.replace('K', ''),
+            'seri': value.gsx$kítự.$t,
+        }
+
+        // Push entry into the list of data
+        dataList.push(entry);
+    })
+}
 
 export default {
     name: "App",
     components: {
         HelloWorld,
     },
+
     data() {
         return {
             show: true,
@@ -203,9 +226,15 @@ export default {
                 { text: "1000d", value: "1000" },
                 { text: "2000d", value: "2000" },
                 { text: "5000d", value: "5000" },
-            ]
+            ],
+            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
+            data: dataList,
+            results: [],
+            alert: false,
+            empty: false
         };
     },
+
     methods: {
         setDay() {
             let day, 
@@ -234,8 +263,43 @@ export default {
             }
         },
 
-        searchMoney() {
+        getData() {
+            // Fetch data from Google sheet file
+            axios.get(this.dataAPI)
+            .then(function(response) {
+                // handle success
+                parseData(response.data.feed.entry);
+            })
+            .catch(function(error) {
+                // handle error
+                console.log(error);
+            })
+        },
 
+        searchMoney() {
+            let selectedDay = this.form.day,
+                selectedMonth = this.form.month,
+                selectedYear = this.form.year
+            if (selectedDay == null || selectedMonth == null || selectedYear == null) {
+                // Show alert
+                this.alert = true;
+            }
+            else {
+                // Hide alert
+                this.alert = false;
+                // Find birthday in data
+                this.data.forEach((item) => {
+                    if (item.day == selectedDay) {
+                        var result = {
+                            'money': item.money,
+                            'seri': item.seri
+                        }
+                    }
+
+                    // Push result into result list
+                    this.results.push(result);
+                })
+            }
         },
 
         onSubmit() {},
@@ -255,13 +319,16 @@ export default {
             });
         }
     },
+
     mounted() {
         // Set day in month
         this.setDay(); 
         // Set month in year
         this.setMonth(); 
         // Set range of year
-        this.setYear(); 
+        this.setYear();
+        // Get data
+        this.getData();
     }
 };
 </script>
