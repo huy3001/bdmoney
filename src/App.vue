@@ -189,8 +189,8 @@ function parseData(entries) {
         var entry = {
             'day': value.gsx$ngày.$t,
             'month': value.gsx$tháng.$t,
-            'year': value.gsx$nămsinh.$t.split('-'),
-            'money': value.gsx$mệnhgiá.$t.replace('K', ''),
+            'year': value.gsx$tấtcảnămsinh.$t.split('-'),
+            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]+/g, ''),
             'seri': value.gsx$kítự.$t,
         }
 
@@ -227,7 +227,7 @@ export default {
                 { text: "2000d", value: "2000" },
                 { text: "5000d", value: "5000" },
             ],
-            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
+            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/2/public/values?alt=json',
             data: dataList,
             results: [],
             alert: false,
@@ -277,9 +277,10 @@ export default {
         },
 
         searchMoney() {
-            let selectedDay = this.form.day,
-                selectedMonth = this.form.month,
+            let selectedDay = this.form.day.replace('0', ''),
+                selectedMonth = this.form.month.replace('0', ''),
                 selectedYear = this.form.year
+
             if (selectedDay == null || selectedMonth == null || selectedYear == null) {
                 // Show alert
                 this.alert = true;
@@ -288,17 +289,36 @@ export default {
                 // Hide alert
                 this.alert = false;
                 // Find birthday in data
+                let resultList = [];
                 this.data.forEach((item) => {
-                    if (item.day == selectedDay) {
-                        var result = {
+                    let itemDay = item.day.replace('0', ''),
+                        itemMonth = item.month,
+                        itemYear = parseInt(item.year);
+
+                    if (itemDay == selectedDay && itemMonth == selectedMonth && itemYear == selectedYear) {
+                        let result = {
+                            'day': item.day,
+                            'month': item.month,
+                            'year': selectedYear,
                             'money': item.money,
                             'seri': item.seri
                         }
-                    }
 
-                    // Push result into result list
-                    this.results.push(result);
+                        // Push result into result list
+                        resultList.push(result);
+                    }
                 })
+
+                // Show or hide message when result is empty or not
+                if (resultList.length == 0) {
+                    this.empty = true;
+                }
+                else {
+                    this.empty = false;
+                }
+                
+                // Assign result list to results
+                this.results = [...resultList];
             }
         },
 
