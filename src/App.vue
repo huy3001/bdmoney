@@ -55,7 +55,7 @@
                             Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
                         </b-alert>
                         
-                        <b-alert show variant="info">
+                        <b-alert show variant="info" v-if="infoMessage">
                             Những tờ tiền sinh nhật của bạn
                         </b-alert>
 
@@ -231,7 +231,8 @@ export default {
             data: dataList,
             results: [],
             alert: false,
-            empty: false
+            empty: false,
+            infoMessage: false
         };
     },
 
@@ -289,32 +290,38 @@ export default {
                 // Hide alert
                 this.alert = false;
                 // Find birthday in data
-                let resultList = [];
+                let itemDay, itemMonth, itemYear, result, resultList = [];
                 this.data.forEach((item) => {
-                    let itemDay = item.day.replace('0', ''),
-                        itemMonth = item.month,
-                        itemYear = parseInt(item.year);
+                    itemDay = item.day.replace('0', ''),
+                    itemMonth = item.month;
 
-                    if (itemDay == selectedDay && itemMonth == selectedMonth && itemYear == selectedYear) {
-                        let result = {
-                            'day': item.day,
-                            'month': item.month,
-                            'year': selectedYear,
-                            'money': item.money,
-                            'seri': item.seri
-                        }
+                    if (itemDay == selectedDay && itemMonth == selectedMonth) {
+                        item.year.forEach((value) => {
+                            itemYear = parseInt(value);
+                            if (itemYear == selectedYear) {
+                                result = {
+                                    'day': item.day,
+                                    'month': item.month,
+                                    'year': selectedYear,
+                                    'money': item.money,
+                                    'seri': item.seri
+                                }
 
-                        // Push result into result list
-                        resultList.push(result);
+                                // Push result into result list
+                                resultList.push(result);
+                            }
+                        })
                     }
                 })
 
                 // Show or hide message when result is empty or not
                 if (resultList.length == 0) {
                     this.empty = true;
+                    this.infoMessage = false;
                 }
                 else {
                     this.empty = false;
+                    this.infoMessage = true;
                 }
                 
                 // Assign result list to results
