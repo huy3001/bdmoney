@@ -58,62 +58,33 @@
                         <b-alert show variant="info" v-if="infoMessage">
                             Những tờ tiền sinh nhật của bạn
                         </b-alert>
-
-                        <b-alert show variant="success">
-                            Có 3 tờ 1000d seri AI
-                        </b-alert>
                     </b-col>
                 </b-row>
 
                 <b-row>
-                    <b-col cols="12" sm="6" md="6">
-                        <b-form-group>
-                            <b-form-checkbox
-                                id="money-checkbox-1"
-                                v-model="form.selected"
-                                name="money-checkbox-1"
-                                value="500"
-                            >
-                                <b-img src="./images/500d.jpg" fluid alt="500d"></b-img>
-                            </b-form-checkbox>
-                        </b-form-group>
-                    </b-col>
+                    <b-col cols="12" sm="6" md="6" v-for="(result, index) in results" :key="index">
+                        <b-alert show variant="success">
+                            Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + result.day + result.month + result.year }}
+                        </b-alert>
 
-                    <b-col cols="12" sm="6" md="6">
                         <b-form-group>
                             <b-form-checkbox
-                                id="money-checkbox-2"
+                                :id="'money-checkbox-' + index"
                                 v-model="form.selected"
-                                name="money-checkbox-2"
-                                value="1000"
+                                :name="'money-checkbox-' + index"
+                                :value="result.money * 1000 + result.seri + result.day + result.month + result.year"
+                                :class="'money-type-' + result.money * 1000"
                             >
-                                <b-img src="./images/1000d.jpg" fluid alt="1000d"></b-img>
-                            </b-form-checkbox>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="6" md="6">
-                        <b-form-group>
-                            <b-form-checkbox
-                                id="money-checkbox-3"
-                                v-model="form.selected"
-                                name="money-checkbox-3"
-                                value="2000"
-                            >
-                                <b-img src="./images/2000d.jpg" fluid alt="2000d"></b-img>
-                            </b-form-checkbox>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="6" md="6">
-                        <b-form-group>
-                            <b-form-checkbox
-                                id="money-checkbox-4"
-                                v-model="form.selected"
-                                name="money-checkbox-4"
-                                value="5000"
-                            >
-                                <b-img src="./images/5000d.jpg" fluid alt="5000d"></b-img>
+                                <b-img src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                                <b-img src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                <b-img src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                                <span class="money-serial">
+                                    {{ result.seri + ' ' + result.day + result.month + result.year }}
+                                </span>
+                                <span class="money-serial-2" v-if="result.money == '5'">
+                                    {{ result.seri + ' ' + result.day + result.month + result.year }}
+                                </span>
                             </b-form-checkbox>
                         </b-form-group>
                     </b-col>
@@ -221,12 +192,6 @@ export default {
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
-            moneys: [
-                { text: "500d", value: "500" },
-                { text: "1000d", value: "1000" },
-                { text: "2000d", value: "2000" },
-                { text: "5000d", value: "5000" },
-            ],
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/2/public/values?alt=json',
             data: dataList,
             results: [],
@@ -339,6 +304,10 @@ export default {
             this.form.phone = '';
             this.form.address = '';
             this.form.note = '';
+            this.results = [];
+            this.alert = false;
+            this.empty = false;
+            this.infoMessage = false;
             // Trick to reset/clear native browser form validation state
             this.show = false;
             this.$nextTick(() => {
@@ -377,6 +346,13 @@ export default {
     .custom-control-label {
         max-width: 500px;
     }
+}
+
+.money-serial,
+.money-serial-2 {
+    color: #cc1d1d;
+    font-family: Consolas;
+    letter-spacing: 1px;
 }
 
 #action {
