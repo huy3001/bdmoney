@@ -156,6 +156,10 @@ import HelloWorld from "./components/HelloWorld.vue";
 var dataList = [];
 
 function parseData(entries) {
+    // Reset data list
+    dataList.length = 0;
+
+    // Get entry from entries
     entries.forEach((value) => {
         var entry = {
             'day': value.gsx$ngày.$t,
@@ -191,7 +195,7 @@ export default {
             years: [{ text: "Năm", value: null }],
             dataTab: '1',
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
-            dataAPI: '',
+            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             data: dataList,
             results: [],
             alert: false,
@@ -244,21 +248,29 @@ export default {
         },
 
         searchMoney() {
-            let selectedDay = this.day.replace('0', ''),
-                selectedMonth = this.month.replace('0', ''),
-                selectedYear = this.year
-
-            if (selectedDay == null || selectedMonth == null || selectedYear == null) {
+            if (this.day == null || this.month == null || this.year == null) {
                 // Show alert
                 this.alert = true;
             }
             else {
+                let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
+                    selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
+                    selectedYear = this.year;
+
                 // Hide alert
                 this.alert = false;
+
                 // Find birthday in data
                 let itemDay, itemMonth, itemYear, result, resultList = [];
+
                 this.data.forEach((item) => {
-                    itemDay = item.day.replace('0', ''),
+                    if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
+                        itemDay = item.day.replace('0', '');
+                    }
+                    else {
+                        itemDay = item.day;
+                    }
+
                     itemMonth = item.month;
 
                     if (itemDay == selectedDay && itemMonth == selectedMonth) {
@@ -305,7 +317,6 @@ export default {
             this.phone = '';
             this.address = '';
             this.note = '';
-            this.data = [];
             this.results = [];
             this.alert = false;
             this.empty = false;
@@ -322,8 +333,12 @@ export default {
         month() {
             // Watch month change and get data base on selected month
             if (this.month != null) {
-                this.dataTab = this.month.replace('0', '');
+                // Set data tab equal selected month
+                this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
+                // Update data API
                 this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
+                // Get data
+                this.getData();
             }
         }
     },
@@ -335,11 +350,6 @@ export default {
         this.setMonth(); 
         // Set range of year
         this.setYear();
-        // Get data
-        // this.getData();
-    },
-
-    updated() {
         // Get data
         this.getData();
     }
