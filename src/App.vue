@@ -9,7 +9,7 @@
                         <b-form-group id="day-selection">
                             <b-form-select
                                 id="day"
-                                v-model="form.day"
+                                v-model="day"
                                 :options="days"
                                 required
                             ></b-form-select>
@@ -20,7 +20,7 @@
                         <b-form-group id="month-selection">
                             <b-form-select
                                 id="month"
-                                v-model="form.month"
+                                v-model="month"
                                 :options="months"
                                 required
                             ></b-form-select>
@@ -31,7 +31,7 @@
                         <b-form-group id="year-selection">
                             <b-form-select
                                 id="month"
-                                v-model="form.year"
+                                v-model="year"
                                 :options="years"
                                 required
                             ></b-form-select>
@@ -70,7 +70,7 @@
                         <b-form-group>
                             <b-form-checkbox
                                 :id="'money-checkbox-' + index"
-                                v-model="form.selected"
+                                v-model="selected"
                                 :name="'money-checkbox-' + index"
                                 :value="result.money * 1000 + result.seri + result.day + result.month + result.year"
                                 :class="'money-type-' + result.money * 1000"
@@ -94,7 +94,7 @@
                     <b-col cols="12" sm="6" md="6">
                         <b-form-group id="name">
                             <b-form-input
-                                v-model="form.name"
+                                v-model="name"
                                 placeholder="Họ và tên"
                                 required
                             ></b-form-input>
@@ -104,7 +104,7 @@
                     <b-col cols="12" sm="6" md="6">
                         <b-form-group id="phone">
                             <b-form-input
-                                v-model="form.phone"
+                                v-model="phone"
                                 placeholder="Số diện thoại"
                                 required
                             ></b-form-input>
@@ -116,7 +116,7 @@
                     <b-col cols="12" sm="6" md="6">
                         <b-form-group id="address">
                             <b-form-textarea
-                                v-model="form.address"
+                                v-model="address"
                                 placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
                                 rows="3"
                                 no-resize
@@ -127,7 +127,7 @@
                     <b-col cols="12" sm="6" md="6">
                         <b-form-group id="note">
                             <b-form-textarea
-                                v-model="form.note"
+                                v-model="note"
                                 placeholder="Nội dung in"
                                 rows="3"
                                 no-resize
@@ -156,6 +156,10 @@ import HelloWorld from "./components/HelloWorld.vue";
 var dataList = [];
 
 function parseData(entries) {
+    // Reset data list
+    dataList.length = 0;
+
+    // Get entry from entries
     entries.forEach((value) => {
         var entry = {
             'day': value.gsx$ngày.$t,
@@ -164,8 +168,7 @@ function parseData(entries) {
             'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]+/g, ''),
             'seri': value.gsx$kítự.$t,
         }
-
-        // Push entry into the list of data
+        // Push entry into the data list
         dataList.push(entry);
     })
 }
@@ -179,20 +182,20 @@ export default {
     data() {
         return {
             show: true,
-            form: {
-                day: null,
-                month: null,
-                year: null,
-                selected: [],
-                name: '',
-                phone: '',
-                address: '',
-                note: ''
-            },
+            day: null,
+            month: null,
+            year: null,
+            selected: [],
+            name: '',
+            phone: '',
+            address: '',
+            note: '',
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
-            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/2/public/values?alt=json',
+            dataTab: '1',
+            dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
+            dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             data: dataList,
             results: [],
             alert: false,
@@ -231,33 +234,43 @@ export default {
 
         getData() {
             // Fetch data from Google sheet file
-            axios.get(this.dataAPI)
-            .then(function(response) {
-                // handle success
-                parseData(response.data.feed.entry);
-            })
-            .catch(function(error) {
-                // handle error
-                console.log(error);
-            })
+            if (this.dataAPI != '') {
+                axios.get(this.dataAPI)
+                .then(function(response) {
+                    // handle success
+                    parseData(response.data.feed.entry);
+                })
+                .catch(function(error) {
+                    // handle error
+                    console.log(error);
+                })
+            }
         },
 
         searchMoney() {
-            let selectedDay = this.form.day.replace('0', ''),
-                selectedMonth = this.form.month.replace('0', ''),
-                selectedYear = this.form.year
-
-            if (selectedDay == null || selectedMonth == null || selectedYear == null) {
+            if (this.day == null || this.month == null || this.year == null) {
                 // Show alert
                 this.alert = true;
             }
             else {
+                let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
+                    selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
+                    selectedYear = this.year;
+
                 // Hide alert
                 this.alert = false;
+
                 // Find birthday in data
                 let itemDay, itemMonth, itemYear, result, resultList = [];
+
                 this.data.forEach((item) => {
-                    itemDay = item.day.replace('0', ''),
+                    if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
+                        itemDay = item.day.replace('0', '');
+                    }
+                    else {
+                        itemDay = item.day;
+                    }
+
                     itemMonth = item.month;
 
                     if (itemDay == selectedDay && itemMonth == selectedMonth) {
@@ -296,14 +309,14 @@ export default {
 
         onSubmit() {},
         onReset() {
-            this.form.day = null;
-            this.form.month = null;
-            this.form.year = null;
-            this.form.selected = [];
-            this.form.name = '';
-            this.form.phone = '';
-            this.form.address = '';
-            this.form.note = '';
+            this.day = null;
+            this.month = null;
+            this.year = null;
+            this.selected = [];
+            this.name = '';
+            this.phone = '';
+            this.address = '';
+            this.note = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
@@ -313,6 +326,20 @@ export default {
             this.$nextTick(() => {
                 this.show = true
             });
+        }
+    },
+
+    watch: {
+        month() {
+            // Watch month change and get data base on selected month
+            if (this.month != null) {
+                // Set data tab equal selected month
+                this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
+                // Update data API
+                this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
+                // Get data
+                this.getData();
+            }
         }
     },
 
