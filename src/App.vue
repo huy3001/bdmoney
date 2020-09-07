@@ -3,7 +3,7 @@
         <b-container>
             <HelloWorld msg="Nhập sinh nhật của bạn" />
             <!-- Choose birthday form -->
-            <b-form id="birthday" @submit="onSubmit" @reset="onReset" v-if="show">
+            <b-form id="birthday" @reset="onReset" v-if="show">
                 <b-row>
                     <b-col cols="12" sm="12" md="3">
                         <b-form-group id="day-selection">
@@ -139,7 +139,7 @@
                 <b-row>
                     <b-col cols="12">
                         <b-form-group id="action">
-                            <b-button type="submit" variant="primary">Gửi yêu cầu</b-button>
+                            <b-button type="button" variant="primary" @click="postData">Gửi yêu cầu</b-button>
                             <b-button type="reset" variant="danger">Chọn lại</b-button>
                         </b-form-group>
                     </b-col>
@@ -154,6 +154,8 @@ import axios from 'axios';
 import HelloWorld from "./components/HelloWorld.vue";
 
 var dataList = [];
+// URL of your blank Google sheet used to store data
+const spreadSheetID = '1dtMmTotiEk-QFGb8h0wU_NPGH23VprTeXtPuG48ta04';
 
 function parseData(entries) {
     // Reset data list
@@ -307,8 +309,65 @@ export default {
             }
         },
 
-        onSubmit() {},
+        postData() {
+            let date = new Date(),
+                currentDay = date.getDate(),
+                currentMonth = date.getMonth() + 1,
+                currentYear = date.getFullYear();
+
+            // List selected value into selected money
+            let selectedMoney = '';
+            this.selected.forEach((value) => {
+                selectedMoney = selectedMoney + value + '-';
+            });
+
+            // Gather all form value into an array
+            let formValue = [
+                    currentDay + '/' + currentMonth + '/' + currentYear,
+                    this.name,
+                    this.phone,
+                    this.address,
+                    selectedMoney,
+                    this.note
+                ]
+            
+            // Params for accessing Google sheet
+            const params = {
+                // The ID of the spreadsheet to update.
+                spreadsheetId: spreadSheetID, 
+                // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
+                range: 'Sheet1', //this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
+                // How the input data should be interpreted.
+                valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
+                // How the input data should be inserted.
+                insertDataOption: 'INSERT_ROWS', //Choose OVERWRITE OR INSERT_ROWS
+            };
+
+            // Config value range body
+            const valueRangeBody = {
+                'majorDimension': 'ROWS', // log each entry as a new row (vs column)
+                'values': [formValue] // convert the object's values to an array
+            };
+
+            // Check if your user is authenticated then login
+            if (this.$gapi.isAuthenticated() !== true) {
+                this.$gapi.login()
+            }
+
+            // Push data to Google sheet file
+            this.$gapi.getGapiClient().then((gapi) => {
+                let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
+                request.then(function(response) {
+                    // TODO: Change code below to process the `response` object
+                    console.log(response.result);
+                }, function(reason) {
+                    console.error('error: ' + reason.result.error.message);
+                });
+            })
+        },
+
         onReset() {
+            // Reset data
             this.day = null;
             this.month = null;
             this.year = null;
