@@ -5,9 +5,9 @@ import App from './App.vue'
 
 const apiConfig = {
   // from https://console.developers.google.com/apis/credentials
-  apiKey: '',
+  apiKey: 'AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
   // from https://console.developers.google.com/apis/credentials
-  clientId: '',
+  clientId: '883054884006-s4miror5q0secnkgdi8d46vji7eo7uec.apps.googleusercontent.com',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
   scope: 'https://www.googleapis.com/auth/spreadsheets',
