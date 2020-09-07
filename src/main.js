@@ -4,8 +4,10 @@ import VueGAPI from 'vue-gapi'
 import App from './App.vue'
 
 const apiConfig = {
-  apiKey: 'AIzaSyAfXKmEtEGEAtlxz4LAlw9x5WbLH2qYkWA',
-  clientId: '777825753096-g87l8ieohos18epukdpvcj1pv4dkfa9n.apps.googleusercontent.com',
+  // from https://console.developers.google.com/apis/credentials
+  apiKey: '',
+  // from https://console.developers.google.com/apis/credentials
+  clientId: '',
   discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
   scope: 'https://www.googleapis.com/auth/spreadsheets',
