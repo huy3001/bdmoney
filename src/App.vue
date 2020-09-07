@@ -2,6 +2,17 @@
     <div id="app">
         <b-container>
             <HelloWorld msg="Nhập sinh nhật của bạn" />
+
+            <!-- Success block -->
+            <b-row>
+                <b-col cols="12">
+                    <b-alert show variant="success" v-if="successMessage">
+                        Cảm ơn bạn đã đặt hàng, chúng tôi sẽ liên hệ và gửi hàng đến bạn sớm nhất có thể 
+                    </b-alert>
+                    <b-button type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
+                </b-col>
+            </b-row>
+
             <!-- Choose birthday form -->
             <b-form id="birthday" @reset="onReset" v-if="show">
                 <b-row>
@@ -51,7 +62,7 @@
                             Vui lòng chọn ngày bạn muốn tìm
                         </b-alert>
 
-                        <b-alert show variant="danger" v-if="empty">
+                        <b-alert show variant="warning" v-if="empty">
                             Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
                         </b-alert>
                         
@@ -87,6 +98,14 @@
                                 </span>
                             </b-form-checkbox>
                         </b-form-group>
+                    </b-col>
+                </b-row>
+
+                <b-row>
+                    <b-col cols="12">
+                        <b-alert show variant="info" v-if="infoMessage">
+                            Vui lòng để lại thông tin của bạn
+                        </b-alert>
                     </b-col>
                 </b-row>
 
@@ -202,7 +221,8 @@ export default {
             results: [],
             alert: false,
             empty: false,
-            infoMessage: false
+            infoMessage: false,
+            successMessage: false
         };
     },
 
@@ -364,6 +384,20 @@ export default {
                     console.error('error: ' + reason.result.error.message);
                 });
             })
+
+            // Show success message
+            this.successMessage = true;
+
+            // Hide form
+            this.show = false;
+        },
+
+        backToForm() {
+            // Show form
+            this.show = true;
+
+            // Reset data
+            this.onReset();
         },
 
         onReset() {
@@ -380,6 +414,7 @@ export default {
             this.alert = false;
             this.empty = false;
             this.infoMessage = false;
+            this.successMessage = false;
             // Trick to reset/clear native browser form validation state
             this.show = false;
             this.$nextTick(() => {
@@ -439,6 +474,36 @@ export default {
     color: #cc1d1d;
     font-family: Consolas;
     letter-spacing: 1px;
+    position: absolute;
+}
+
+.money-serial {
+    .money-type-500 & {
+        left: 30px;
+        top: 145px;
+    }
+
+    .money-type-1000 & {
+        left: 45px;
+        top: 78px;
+    }
+    
+    .money-type-2000 & {
+        left: 185px;
+        top: 62px;
+    }
+
+    .money-type-5000 & {
+        left: 210px;
+        top: 64px;
+    }
+}
+
+.money-serial-2 {
+    .money-type-5000 & {
+        left: 75px;
+        top: 150px;
+    }
 }
 
 #action {
