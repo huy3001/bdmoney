@@ -174,7 +174,7 @@ import HelloWorld from "./components/HelloWorld.vue";
 
 var dataList = [];
 // URL of your blank Google sheet used to store data
-const spreadSheetID = '1dtMmTotiEk-QFGb8h0wU_NPGH23VprTeXtPuG48ta04';
+const spreadSheetID = '1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw';
 
 function parseData(entries) {
     // Reset data list
@@ -356,7 +356,7 @@ export default {
                 // The ID of the spreadsheet to update.
                 spreadsheetId: spreadSheetID, 
                 // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
-                range: 'Sheet1', //this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
+                range: 'Tháng ' + this.dataTab, // this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
                 // How the input data should be interpreted.
                 valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
                 // How the input data should be inserted.
