@@ -91,10 +91,12 @@
                                 <b-img src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
                                 <b-img src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
                                 <span class="money-serial">
-                                    {{ result.seri + ' ' + result.day + result.month + result.year }}
+                                    <span class="money-serial-text">{{ result.seri }}</span>
+                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
                                 <span class="money-serial-2" v-if="result.money == '5'">
-                                    {{ result.seri + ' ' + result.day + result.month + result.year }}
+                                    <span class="money-serial-text">{{ result.seri }}</span>
+                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
                             </b-form-checkbox>
                         </b-form-group>
@@ -452,6 +454,32 @@ export default {
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/bootstrap-vue/src/index.scss";
 
+@font-face {
+    font-family: 'Abel';
+    src: url('./fonts/Abel-Regular.eot');
+    src: url('./fonts/Abel-Regular.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/Abel-Regular.woff2') format('woff2'),
+        url('./fonts/Abel-Regular.woff') format('woff'),
+        url('./fonts/Abel-Regular.ttf') format('truetype'),
+        url('./fonts/Abel-Regular.svg#Abel-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'NHL Washington';
+    src: url('./fonts/NHLWashington.eot');
+    src: url('./fonts/NHLWashington.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/NHLWashington.woff2') format('woff2'),
+        url('./fonts/NHLWashington.woff') format('woff'),
+        url('./fonts/NHLWashington.ttf') format('truetype'),
+        url('./fonts/NHLWashington.svg#NHLWashington') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -469,38 +497,49 @@ export default {
 
 .money-serial,
 .money-serial-2 {
-    color: #cc1d1d;
-    font-family: Consolas;
-    letter-spacing: 1px;
+    color: #C23927;
+    letter-spacing: 2px;
     position: absolute;
 }
 
 .money-serial {
+    &-text {
+        font-family: 'NHL Washington', sans-serif;
+    }
+
+    &-number {
+        font-family: 'Abel', sans-serif;
+        font-weight: 700;
+        margin-left: 10px;
+    }
+
     .money-type-500 & {
-        left: 30px;
-        top: 145px;
+        color: #C54247;
+        left: 40px;
+        top: 140px;
     }
 
     .money-type-1000 & {
-        left: 45px;
+        left: 40px;
+        letter-spacing: 1px;
         top: 78px;
     }
     
     .money-type-2000 & {
-        left: 185px;
+        left: 196px;
         top: 62px;
     }
 
     .money-type-5000 & {
-        left: 210px;
-        top: 64px;
+        left: 196px;
+        top: 55px;
     }
 }
 
 .money-serial-2 {
     .money-type-5000 & {
-        left: 75px;
-        top: 150px;
+        left: 72px;
+        top: 144px;
     }
 }
 
