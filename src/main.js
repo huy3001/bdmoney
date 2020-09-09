@@ -12,7 +12,7 @@ const apiConfig = {
   // see all available scopes here: https://developers.google.com/identity/protocols/googlescopes'
   scope: 'https://www.googleapis.com/auth/spreadsheets',
   // works only with `ux_mode: "prompt"`
-  refreshToken: true
+  refreshToken: false
 }
 
 Vue.config.productionTip = false
