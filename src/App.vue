@@ -373,6 +373,13 @@ export default {
             if (this.$gapi.isAuthenticated() !== true) {
                 this.$gapi.login()
             }
+            else {
+                // Show success message
+                this.successMessage = true;
+
+                // Hide form
+                this.show = false;
+            }
 
             // Push data to Google sheet file
             this.$gapi.getGapiClient().then((gapi) => {
@@ -384,18 +391,9 @@ export default {
                     console.error('error: ' + reason.result.error.message);
                 });
             })
-
-            // Show success message
-            this.successMessage = true;
-
-            // Hide form
-            this.show = false;
         },
 
         backToForm() {
-            // Show form
-            this.show = true;
-
             // Reset data
             this.onReset();
         },
