@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <b-container>
-            <HelloWorld msg="Nhập sinh nhật của bạn" />
+            <HelloWorld msg="Nhập sinh nhật của bạn hoặc người thương" />
 
             <!-- Success block -->
             <b-row>
@@ -16,7 +16,7 @@
             <!-- Choose birthday form -->
             <b-form id="birthday" @reset="onReset" v-if="show">
                 <b-row>
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="day-selection">
                             <b-form-select
                                 id="day"
@@ -27,7 +27,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="month-selection">
                             <b-form-select
                                 id="month"
@@ -38,7 +38,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="year-selection">
                             <b-form-select
                                 id="month"
@@ -49,9 +49,9 @@
                         </b-form-group>
                     </b-col>
 
-                     <b-col cols="12" sm="12" md="3">
+                     <b-col cols="12" sm="12" md="12" lg="3">
                         <b-form-group id="search">
-                            <b-button type="button" variant="success" @click="searchMoney">Tìm tờ tiền</b-button>
+                            <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -73,7 +73,7 @@
                 </b-row>
 
                 <b-row>
-                    <b-col cols="12" sm="6" md="6" v-for="(result, index) in results" :key="index">
+                    <b-col cols="12" sm="12" md="6" lg="4" v-for="(result, index) in results" :key="index">
                         <b-alert show variant="success">
                             Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + result.day + result.month + result.year }}
                         </b-alert>
@@ -106,13 +106,11 @@
                 <b-row>
                     <b-col cols="12">
                         <b-alert show variant="info" v-if="infoMessage">
-                            Vui lòng để lại thông tin của bạn
+                            Thông tin đơn hàng
                         </b-alert>
                     </b-col>
-                </b-row>
 
-                <b-row>
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="name">
                             <b-form-input
                                 v-model="name"
@@ -122,7 +120,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="phone">
                             <b-form-input
                                 v-model="phone"
@@ -131,10 +129,8 @@
                             ></b-form-input>
                         </b-form-group>
                     </b-col>
-                </b-row>
 
-                <b-row>
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="address">
                             <b-form-textarea
                                 v-model="address"
@@ -145,7 +141,8 @@
                             ></b-form-textarea>
                         </b-form-group>
                     </b-col>
-                    <b-col cols="12" sm="6" md="6">
+
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="note">
                             <b-form-textarea
                                 v-model="note"
@@ -155,12 +152,10 @@
                             ></b-form-textarea>
                         </b-form-group>
                     </b-col>
-                </b-row>
-
-                <b-row>
-                    <b-col cols="12">
+                    
+                    <b-col cols="12" v-if="infoMessage">
                         <b-form-group id="action">
-                            <b-button type="button" variant="primary" @click="postData">Gửi yêu cầu</b-button>
+                            <b-button type="button" variant="primary" @click="postData">Đặt hàng</b-button>
                             <b-button type="reset" variant="danger">Chọn lại</b-button>
                         </b-form-group>
                     </b-col>
@@ -185,11 +180,11 @@ function parseData(entries) {
     // Get entry from entries
     entries.forEach((value) => {
         var entry = {
-            'day': value.gsx$ngày.$t,
-            'month': value.gsx$tháng.$t,
+            'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
+            'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
             'year': value.gsx$tấtcảnămsinh.$t.split('-'),
-            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]+/g, ''),
-            'seri': value.gsx$kítự.$t,
+            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
+            'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
         }
         // Push entry into the data list
         dataList.push(entry);
@@ -249,7 +244,7 @@ export default {
 
         setYear() {
             let year, 
-                startYear = 1950, 
+                startYear = 1951, 
                 endYear = (new Date()).getFullYear();
             for (year = startYear; year <= endYear; year++) {
                 this.years.push(year);
