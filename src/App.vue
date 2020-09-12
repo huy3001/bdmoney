@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <b-container>
-            <HelloWorld msg="Nhập sinh nhật của bạn" />
+            <HelloWorld msg="Nhập sinh nhật của bạn hoặc người thương" />
 
             <!-- Success block -->
             <b-row>
@@ -16,7 +16,7 @@
             <!-- Choose birthday form -->
             <b-form id="birthday" @reset="onReset" v-if="show">
                 <b-row>
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="day-selection">
                             <b-form-select
                                 id="day"
@@ -27,7 +27,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="month-selection">
                             <b-form-select
                                 id="month"
@@ -38,7 +38,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="3">
+                    <b-col cols="12" sm="12" md="4" lg="3">
                         <b-form-group id="year-selection">
                             <b-form-select
                                 id="month"
@@ -49,9 +49,9 @@
                         </b-form-group>
                     </b-col>
 
-                     <b-col cols="12" sm="12" md="3">
+                     <b-col cols="12" sm="12" md="12" lg="3">
                         <b-form-group id="search">
-                            <b-button type="button" variant="success" @click="searchMoney">Tìm tờ tiền</b-button>
+                            <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -73,31 +73,34 @@
                 </b-row>
 
                 <b-row>
-                    <b-col cols="12" sm="6" md="6" v-for="(result, index) in results" :key="index">
+                    <b-col cols="12" sm="12" md="6" lg="4" v-for="(result, index) in results" :key="index">
                         <b-alert show variant="success">
                             Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + result.day + result.month + result.year }}
                         </b-alert>
 
-                        <b-form-group>
+                        <b-form-group :class="['money-form-group', 'money-type-' + result.money * 1000]">
+                            <b-img src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                            <b-img src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                            <b-img src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                            <b-img src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+
+                            <span class="money-serial">
+                                <span class="money-serial-text">{{ result.seri }}</span>
+                                <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
+                            </span>
+                            
+                            <span class="money-serial-2" v-if="result.money == '5'">
+                                <span class="money-serial-text">{{ result.seri }}</span>
+                                <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
+                            </span>
+
                             <b-form-checkbox
-                                :id="'money-checkbox-' + index"
                                 v-model="selected"
+                                :id="'money-checkbox-' + index"
                                 :name="'money-checkbox-' + index"
                                 :value="result.money * 1000 + result.seri + result.day + result.month + result.year"
-                                :class="'money-type-' + result.money * 1000"
                             >
-                                <b-img src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                                <b-img src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
-                                <span class="money-serial">
-                                    <span class="money-serial-text">{{ result.seri }}</span>
-                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                                </span>
-                                <span class="money-serial-2" v-if="result.money == '5'">
-                                    <span class="money-serial-text">{{ result.seri }}</span>
-                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                                </span>
+                                Chọn mua
                             </b-form-checkbox>
                         </b-form-group>
                     </b-col>
@@ -106,13 +109,39 @@
                 <b-row>
                     <b-col cols="12">
                         <b-alert show variant="info" v-if="infoMessage">
-                            Vui lòng để lại thông tin của bạn
+                            Thông tin đơn hàng
                         </b-alert>
                     </b-col>
-                </b-row>
 
-                <b-row>
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                        <div class="money-selected">
+                            <p>
+                                <span>Bạn đã chọn:</span>
+                            </p>
+                            <p class="money-series">
+                                <span v-for="(item, index) in selected" :key="index">
+                                    {{ item }}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="money-payment">
+                            <p class="money-price">
+                                <span>Giá tiền: {{ price | currencyFormat }} / tờ</span>
+                                <span>Phí ship: {{ ship | currencyFormat }}</span>
+                            </p>
+                            <p class="money-total">
+                                Tổng tiền: {{ total | currencyFormat }}
+                            </p>
+                        </div>
+
+                        <div class="money-promotion">
+                            <p v-if="selected.length < 2">( Chọn mua từ 2 tờ trở lên để được free ship )</p>
+                            <p v-if="selected.length > 1">( Bạn đã được free ship )</p>
+                        </div>
+                    </b-col>
+
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="name">
                             <b-form-input
                                 v-model="name"
@@ -122,7 +151,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="phone">
                             <b-form-input
                                 v-model="phone"
@@ -131,10 +160,8 @@
                             ></b-form-input>
                         </b-form-group>
                     </b-col>
-                </b-row>
 
-                <b-row>
-                    <b-col cols="12" sm="6" md="6">
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="address">
                             <b-form-textarea
                                 v-model="address"
@@ -145,22 +172,21 @@
                             ></b-form-textarea>
                         </b-form-group>
                     </b-col>
-                    <b-col cols="12" sm="6" md="6">
+
+                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="note">
                             <b-form-textarea
                                 v-model="note"
-                                placeholder="Nội dung in"
+                                placeholder="Nội dung in chữ miễn phí"
                                 rows="3"
                                 no-resize
                             ></b-form-textarea>
                         </b-form-group>
                     </b-col>
-                </b-row>
-
-                <b-row>
-                    <b-col cols="12">
+                    
+                    <b-col cols="12" v-if="infoMessage">
                         <b-form-group id="action">
-                            <b-button type="button" variant="primary" @click="postData">Gửi yêu cầu</b-button>
+                            <b-button type="button" variant="primary" @click="postData">Đặt hàng</b-button>
                             <b-button type="reset" variant="danger">Chọn lại</b-button>
                         </b-form-group>
                     </b-col>
@@ -185,11 +211,11 @@ function parseData(entries) {
     // Get entry from entries
     entries.forEach((value) => {
         var entry = {
-            'day': value.gsx$ngày.$t,
-            'month': value.gsx$tháng.$t,
+            'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
+            'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
             'year': value.gsx$tấtcảnămsinh.$t.split('-'),
-            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]+/g, ''),
-            'seri': value.gsx$kítự.$t,
+            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
+            'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
         }
         // Push entry into the data list
         dataList.push(entry);
@@ -216,6 +242,8 @@ export default {
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
+            price: 99,
+            ship: 30,
             dataTab: '1',
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
@@ -226,6 +254,23 @@ export default {
             infoMessage: false,
             successMessage: false
         };
+    },
+
+    filters: {
+        currencyFormat(value) {
+            return value + 'k'
+        }
+    },
+
+    computed: {
+        total() {
+            let total = 0;
+            // Calculate total price
+            if (this.selected.length > 0) {
+                total = this.price * this.selected.length + this.ship
+            }
+            return total;
+        }
     },
 
     methods: {
@@ -249,7 +294,7 @@ export default {
 
         setYear() {
             let year, 
-                startYear = 1950, 
+                startYear = 1951, 
                 endYear = (new Date()).getFullYear();
             for (year = startYear; year <= endYear; year++) {
                 this.years.push(year);
@@ -350,6 +395,7 @@ export default {
                     this.phone,
                     this.address,
                     selectedMoney,
+                    this.total + 'k',
                     this.note
                 ]
             
@@ -434,6 +480,16 @@ export default {
                 // Get data
                 this.getData();
             }
+        },
+
+        selected() {
+            // Watch selected change and update ship fee
+            if (this.selected.length > 1) {
+                this.ship = 0
+            }
+            else {
+                this.ship = 30
+            }
         }
     },
 
@@ -489,57 +545,62 @@ export default {
     margin-top: 60px;
 }
 
-.custom-checkbox {
-    .custom-control-label {
-        max-width: 500px;
-    }
-}
-
-.money-serial,
-.money-serial-2 {
-    color: #C23927;
-    letter-spacing: 2px;
-    position: absolute;
-}
-
-.money-serial {
-    &-text {
-        font-family: 'NHL Washington', sans-serif;
+.money {
+    &-form-group {
+        position: relative;
     }
 
-    &-number {
-        font-family: 'Abel', sans-serif;
-        font-weight: 700;
-        margin-left: 10px;
+    &-serial,
+    &-serial-2 {
+        color: #C23927;
+        letter-spacing: 2px;
+        position: absolute;
     }
 
-    .money-type-500 & {
-        color: #C54247;
-        left: 40px;
-        top: 140px;
+    &-serial {
+        &-text {
+            font-family: 'NHL Washington', sans-serif;
+        }
+
+        &-number {
+            font-family: 'Abel', sans-serif;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .money-type-500 & {
+            color: #C54247;
+            left: 40px;
+            top: 140px;
+        }
+
+        .money-type-1000 & {
+            left: 40px;
+            letter-spacing: 1px;
+            top: 78px;
+        }
+        
+        .money-type-2000 & {
+            left: 196px;
+            top: 62px;
+        }
+
+        .money-type-5000 & {
+            left: 196px;
+            top: 55px;
+        }
     }
 
-    .money-type-1000 & {
-        left: 40px;
-        letter-spacing: 1px;
-        top: 78px;
-    }
-    
-    .money-type-2000 & {
-        left: 196px;
-        top: 62px;
+    &-serial-2 {
+        .money-type-5000 & {
+            left: 72px;
+            top: 144px;
+        }
     }
 
-    .money-type-5000 & {
-        left: 196px;
-        top: 55px;
-    }
-}
-
-.money-serial-2 {
-    .money-type-5000 & {
-        left: 72px;
-        top: 144px;
+    &-price {
+        display: flex;
+        justify-content: space-between;
     }
 }
 
