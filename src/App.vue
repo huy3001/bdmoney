@@ -79,20 +79,20 @@
                         </b-alert>
 
                         <b-form-group :class="['money-form-group', 'money-type-' + result.money * 1000]">
-                            <b-img src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                            <b-img src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                            <b-img src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                            <b-img src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                            <b-img :id="result.money + index" width="1003" height="500" src="./images/500d.jpg" fluid alt="500d" v-if="result.money === '0.5'"></b-img>
+                            <b-img :id="result.money + index" width="1492" height="720" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money === '1'"></b-img>
+                            <b-img :id="result.money + index" width="1488" height="725" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
+                            <b-img :id="result.money + index" width="1495" height="720" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money === '5'"></b-img>
 
-                            <span class="money-serial">
+                            <!-- <span class="money-serial">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                             </span>
                             
-                            <span class="money-serial-2" v-if="result.money == '5'">
+                            <span class="money-serial-2" v-if="result.money === '5'">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                            </span>
+                            </span> -->
 
                             <b-form-checkbox
                                 v-model="selected"
@@ -173,7 +173,7 @@
                         </b-form-group>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                    <!-- <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-form-group id="note">
                             <b-form-textarea
                                 v-model="note"
@@ -182,7 +182,7 @@
                                 no-resize
                             ></b-form-textarea>
                         </b-form-group>
-                    </b-col>
+                    </b-col> -->
                     
                     <b-col cols="12" v-if="infoMessage">
                         <b-form-group id="action">
@@ -204,6 +204,7 @@ var dataList = [];
 // URL of your blank Google sheet used to store data
 const spreadSheetID = '1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw';
 
+// Parse data from API
 function parseData(entries) {
     // Reset data list
     dataList.length = 0;
@@ -222,6 +223,42 @@ function parseData(entries) {
     })
 }
 
+// Draw money image based on data
+function drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition) {
+    var image = document.getElementById(imageId),
+        imageWidth = image.offsetWidth,
+        imageHeight = image.offsetHeight,
+        wmCanvas = document.createElement('canvas'),
+        wmCtx = wmCanvas.getContext('2d');
+
+    // Create temporary image
+    var newImage  = new Image();
+    newImage.src = imageUrl;
+
+    image.onload = function() {
+        // Set size of temporary image and watermark canvas
+        wmCanvas.width = newImage.width = imageWidth;
+        wmCanvas.height = newImage.height = imageHeight;
+        // Render watermark canvas with size above 
+        wmCtx.drawImage(newImage, 0, 0, imageWidth, imageHeight);
+        // Fill text, color and font
+        wmCtx.fillStyle = serialColor;
+        wmCtx.font = '12px NHL Washington';
+        wmCtx.fillText(serial, leftPosition, topPosition);
+        wmCtx.font = '700 14px Abel';
+        wmCtx.fillText(number, leftPosition + 20, topPosition);
+        // Fill more text if image is 5000d
+        if (imageUrl.includes('5000d')) {
+            wmCtx.font = '12px NHL Washington';
+            wmCtx.fillText(serial, leftPosition - 85, topPosition + 60);
+            wmCtx.font = '700 14px Abel';
+            wmCtx.fillText(number, leftPosition - 65, topPosition + 60);
+        }
+        // Replace image src by watermark canvas data url
+        image.src = wmCanvas.toDataURL('image/jpeg', 1);
+    }
+}
+
 export default {
     name: "App",
     components: {
@@ -238,7 +275,7 @@ export default {
             name: '',
             phone: '',
             address: '',
-            note: '',
+            // note: '',
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
@@ -303,7 +340,7 @@ export default {
 
         getData() {
             // Fetch data from Google sheet file
-            if (this.dataAPI != '') {
+            if (this.dataAPI !== '') {
                 axios.get(this.dataAPI)
                 .then(function(response) {
                     // handle success
@@ -317,7 +354,7 @@ export default {
         },
 
         searchMoney() {
-            if (this.day == null || this.month == null || this.year == null) {
+            if (this.day === null || this.month === null || this.year === null) {
                 // Show alert
                 this.alert = true;
             }
@@ -342,10 +379,10 @@ export default {
 
                     itemMonth = item.month;
 
-                    if (itemDay == selectedDay && itemMonth == selectedMonth) {
+                    if (itemDay === selectedDay && itemMonth === selectedMonth) {
                         item.year.forEach((value) => {
                             itemYear = parseInt(value);
-                            if (itemYear == selectedYear) {
+                            if (itemYear === selectedYear) {
                                 result = {
                                     'day': item.day,
                                     'month': item.month,
@@ -362,7 +399,7 @@ export default {
                 })
 
                 // Show or hide message when result is empty or not
-                if (resultList.length == 0) {
+                if (resultList.length === 0) {
                     this.empty = true;
                     this.infoMessage = false;
                 }
@@ -373,6 +410,53 @@ export default {
                 
                 // Assign result list to results
                 this.results = [...resultList];
+            }
+        },
+
+        drawMoney() {
+            if (this.results.length > 0) {
+                // Set data to draw money
+                let imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition;
+                this.results.forEach((result, index) => {
+                    switch(result.money) {
+                        case '0.5':
+                            imageId = result.money + index;
+                            imageUrl = './images/500d.jpg';
+                            serialColor = '#C54247';
+                            leftPosition = 30;
+                            topPosition = 115;
+                            break;
+                        case '1':
+                            imageId = result.money + index;
+                            imageUrl = './images/1000d.jpg';
+                            serialColor = '#C23927';
+                            leftPosition = 25;
+                            topPosition = 68;
+                            break;
+                        case '2':
+                            imageId = result.money + index;
+                            imageUrl = './images/2000d.jpg';
+                            serialColor = '#C23927';
+                            leftPosition = 135;
+                            topPosition = 58;
+                            break;
+                        case '5':
+                            imageId = result.money + index;
+                            imageUrl = './images/5000d.jpg';
+                            serialColor = '#C23927';
+                            leftPosition = 135;
+                            topPosition = 52;
+                            break;
+                        default:
+                            // Nothing
+                    }
+
+                    serial = result.seri;
+                    number = result.day + result.month + result.year;
+                    
+                    // Call draw image by canvas
+                    drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition);
+                })
             }
         },
 
@@ -396,7 +480,7 @@ export default {
                     this.address,
                     selectedMoney,
                     this.total + 'k',
-                    this.note
+                    // this.note
                 ]
             
             // Params for accessing Google sheet
@@ -455,7 +539,7 @@ export default {
             this.name = '';
             this.phone = '';
             this.address = '';
-            this.note = '';
+            // this.note = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
@@ -472,7 +556,7 @@ export default {
     watch: {
         month() {
             // Watch month change and get data base on selected month
-            if (this.month != null) {
+            if (this.month !== null) {
                 // Set data tab equal selected month
                 this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
                 // Update data API
@@ -502,6 +586,11 @@ export default {
         this.setYear();
         // Get data
         this.getData();
+    },
+
+    updated() {
+        // Draw moeny
+        this.drawMoney();
     }
 };
 </script>
@@ -546,57 +635,57 @@ export default {
 }
 
 .money {
-    &-form-group {
-        position: relative;
-    }
+    // &-form-group {
+    //     position: relative;
+    // }
 
-    &-serial,
-    &-serial-2 {
-        color: #C23927;
-        letter-spacing: 2px;
-        position: absolute;
-    }
+    // &-serial,
+    // &-serial-2 {
+    //     color: #C23927;
+    //     letter-spacing: 2px;
+    //     position: absolute;
+    // }
 
-    &-serial {
-        &-text {
-            font-family: 'NHL Washington', sans-serif;
-        }
+    // &-serial {
+    //     &-text {
+    //         font-family: 'NHL Washington', sans-serif;
+    //     }
 
-        &-number {
-            font-family: 'Abel', sans-serif;
-            font-weight: 700;
-            margin-left: 10px;
-        }
+    //     &-number {
+    //         font-family: 'Abel', sans-serif;
+    //         font-weight: 700;
+    //         margin-left: 10px;
+    //     }
 
-        .money-type-500 & {
-            color: #C54247;
-            left: 40px;
-            top: 140px;
-        }
+    //     .money-type-500 & {
+    //         color: #C54247;
+    //         left: 40px;
+    //         top: 140px;
+    //     }
 
-        .money-type-1000 & {
-            left: 40px;
-            letter-spacing: 1px;
-            top: 78px;
-        }
+    //     .money-type-1000 & {
+    //         left: 40px;
+    //         letter-spacing: 1px;
+    //         top: 78px;
+    //     }
         
-        .money-type-2000 & {
-            left: 196px;
-            top: 62px;
-        }
+    //     .money-type-2000 & {
+    //         left: 196px;
+    //         top: 62px;
+    //     }
 
-        .money-type-5000 & {
-            left: 196px;
-            top: 55px;
-        }
-    }
+    //     .money-type-5000 & {
+    //         left: 196px;
+    //         top: 55px;
+    //     }
+    // }
 
-    &-serial-2 {
-        .money-type-5000 & {
-            left: 72px;
-            top: 144px;
-        }
-    }
+    // &-serial-2 {
+    //     .money-type-5000 & {
+    //         left: 72px;
+    //         top: 144px;
+    //     }
+    // }
 
     &-price {
         display: flex;
