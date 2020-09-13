@@ -73,16 +73,16 @@
                 </b-row>
 
                 <b-row>
-                    <b-col cols="12" sm="12" md="6" lg="4" v-for="(result, index) in results" :key="index">
+                    <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
                         <b-alert show variant="success">
                             Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + result.day + result.month + result.year }}
                         </b-alert>
 
                         <b-form-group :class="['money-form-group', 'money-type-' + result.money * 1000]">
-                            <b-img :id="result.money + index" width="1003" height="500" src="./images/500d.jpg" fluid alt="500d" v-if="result.money === '0.5'"></b-img>
-                            <b-img :id="result.money + index" width="1492" height="720" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money === '1'"></b-img>
-                            <b-img :id="result.money + index" width="1488" height="725" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
-                            <b-img :id="result.money + index" width="1495" height="720" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money === '5'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="349" src="./images/500d.jpg" fluid alt="500d" v-if="result.money === '0.5'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money === '1'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money === '5'"></b-img>
 
                             <!-- <span class="money-serial">
                                 <span class="money-serial-text">{{ result.seri }}</span>
@@ -235,7 +235,13 @@ function drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftP
     var newImage  = new Image();
     newImage.src = imageUrl;
 
-    image.onload = function() {
+    // Load image and draw watermark
+    if (image) {
+        image.addEventListener('load', drawWatermark);
+    }
+
+    // Draw watermark
+    function drawWatermark() {
         // Set size of temporary image and watermark canvas
         wmCanvas.width = newImage.width = imageWidth;
         wmCanvas.height = newImage.height = imageHeight;
@@ -243,16 +249,16 @@ function drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftP
         wmCtx.drawImage(newImage, 0, 0, imageWidth, imageHeight);
         // Fill text, color and font
         wmCtx.fillStyle = serialColor;
-        wmCtx.font = '12px NHL Washington';
+        wmCtx.font = '16px NHL Washington';
         wmCtx.fillText(serial, leftPosition, topPosition);
-        wmCtx.font = '700 14px Abel';
-        wmCtx.fillText(number, leftPosition + 20, topPosition);
+        wmCtx.font = '700 17px Abel';
+        wmCtx.fillText(number, leftPosition + 30, topPosition);
         // Fill more text if image is 5000d
         if (imageUrl.includes('5000d')) {
-            wmCtx.font = '12px NHL Washington';
-            wmCtx.fillText(serial, leftPosition - 85, topPosition + 60);
-            wmCtx.font = '700 14px Abel';
-            wmCtx.fillText(number, leftPosition - 65, topPosition + 60);
+            wmCtx.font = '16px NHL Washington';
+            wmCtx.fillText(serial, leftPosition - 130, topPosition + 90);
+            wmCtx.font = '700 17px Abel';
+            wmCtx.fillText(number, leftPosition - 100, topPosition + 90);
         }
         // Replace image src by watermark canvas data url
         image.src = wmCanvas.toDataURL('image/jpeg', 1);
@@ -423,29 +429,29 @@ export default {
                             imageId = result.money + index;
                             imageUrl = './images/500d.jpg';
                             serialColor = '#C54247';
-                            leftPosition = 30;
-                            topPosition = 115;
+                            leftPosition = 50;
+                            topPosition = 170;
                             break;
                         case '1':
                             imageId = result.money + index;
                             imageUrl = './images/1000d.jpg';
                             serialColor = '#C23927';
-                            leftPosition = 25;
-                            topPosition = 68;
+                            leftPosition = 40;
+                            topPosition = 100;
                             break;
                         case '2':
                             imageId = result.money + index;
                             imageUrl = './images/2000d.jpg';
                             serialColor = '#C23927';
-                            leftPosition = 135;
-                            topPosition = 58;
+                            leftPosition = 210;
+                            topPosition = 85;
                             break;
                         case '5':
                             imageId = result.money + index;
                             imageUrl = './images/5000d.jpg';
                             serialColor = '#C23927';
-                            leftPosition = 135;
-                            topPosition = 52;
+                            leftPosition = 210;
+                            topPosition = 80;
                             break;
                         default:
                             // Nothing
