@@ -75,10 +75,10 @@
                 <b-row>
                     <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
                         <b-alert show variant="success">
-                            Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + result.day + result.month + result.year }}
+                            Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + ' ' + result.day + result.month + result.year }}
                         </b-alert>
 
-                        <b-form-group :class="['money-form-group', 'money-type-' + result.money * 1000]">
+                        <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
                             <b-img :id="result.money + index" width="700" height="349" src="./images/500d.jpg" fluid alt="500d" v-if="result.money === '0.5'"></b-img>
                             <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money === '1'"></b-img>
                             <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
@@ -95,10 +95,11 @@
                             </span>
 
                             <b-form-checkbox
+                                class="mt-2"
                                 v-model="selected"
                                 :id="'money-checkbox-' + index"
                                 :name="'money-checkbox-' + index"
-                                :value="result.money * 1000 + result.seri + result.day + result.month + result.year"
+                                :value="result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year"
                             >
                                 Chọn mua
                             </b-form-checkbox>
@@ -114,31 +115,25 @@
                     </b-col>
 
                     <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                        <div class="money-selected">
-                            <p>
+                        <b-list-group class="text-left mb-3">
+                            <b-list-group-item>
                                 <span>Bạn đã chọn:</span>
-                            </p>
-                            <p class="money-series">
-                                <span v-for="(item, index) in selected" :key="index">
+                                <span 
+                                    class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
+                                    v-for="(item, index) in selected" 
+                                    :key="index"
+                                >
                                     {{ item }}
-                                </span>
-                            </p>
-                        </div>
-
-                        <div class="money-payment">
-                            <p class="money-price">
-                                <span>Giá tiền: {{ price | currencyFormat }} / tờ</span>
-                                <span>Phí ship: {{ ship | currencyFormat }}</span>
-                            </p>
-                            <p class="money-total">
-                                Tổng tiền: {{ total | currencyFormat }}
-                            </p>
-                        </div>
-
-                        <div class="money-promotion">
-                            <p v-if="selected.length < 2">( Chọn mua từ 2 tờ trở lên để được free ship )</p>
-                            <p v-if="selected.length > 1">( Bạn đã được free ship )</p>
-                        </div>
+                                </span>    
+                            </b-list-group-item>
+                            <b-list-group-item>Giá tiền: {{ price | currencyFormat }} / tờ</b-list-group-item>
+                            <b-list-group-item>Phí ship: {{ ship | currencyFormat }}</b-list-group-item>
+                            <b-list-group-item>Tổng tiền: {{ total | currencyFormat }}</b-list-group-item>
+                            <b-list-group-item>
+                                <span v-if="selected.length < 2">( Chọn mua từ 2 tờ trở lên để được free ship )</span>
+                                <span v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                            </b-list-group-item>
+                        </b-list-group>
                     </b-col>
 
                     <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
@@ -186,8 +181,8 @@
                     
                     <b-col cols="12" v-if="infoMessage">
                         <b-form-group id="action">
-                            <b-button type="button" variant="primary" @click="postData">Đặt hàng</b-button>
-                            <b-button type="reset" variant="danger">Chọn lại</b-button>
+                            <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
+                            <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -475,7 +470,7 @@ export default {
             // List selected value into selected money
             let selectedMoney = '';
             this.selected.forEach((value) => {
-                selectedMoney = selectedMoney + value + '-';
+                selectedMoney = selectedMoney + value + ' - ';
             });
 
             // Gather all form value into an array
@@ -640,10 +635,12 @@ export default {
     margin-top: 60px;
 }
 
+.list-group-item {
+    padding: 0.375rem 0.75rem;
+}
+
 .money {
     &-form-group {
-        position: relative;
-        
         .img-fluid {
             pointer-events: none;
         }
@@ -702,15 +699,11 @@ export default {
             }
 
             @media (min-width: 768px) {
-                top: 50%;
+                top: 49%;
             }
 
             @media (min-width: 992px) {
                 top: 52%;
-            }
-
-            @media (min-width: 1200px) {
-                top: 53%;
             }
         }
 
@@ -743,25 +736,19 @@ export default {
             left: 15%;
             top: 51%;
 
-            @media (min-width: 400px) {
+            @media (min-width: 1200px) {
                 top: 53%;
             }
-
-            @media (min-width: 1200px) {
-                top: 55%;
-            }
         }
+    }
+
+    &-series {
+        font-size: 80%;
     }
 
     &-price {
         display: flex;
         justify-content: space-between;
-    }
-}
-
-#action {
-    .btn {
-        margin: 1rem;
     }
 }
 </style>
