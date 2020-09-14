@@ -84,7 +84,7 @@
                             <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
                             <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money === '5'"></b-img>
 
-                            <!-- <span class="money-serial">
+                            <span class="money-serial">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                             </span>
@@ -92,7 +92,7 @@
                             <span class="money-serial-2" v-if="result.money === '5'">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                            </span> -->
+                            </span>
 
                             <b-form-checkbox
                                 v-model="selected"
@@ -224,46 +224,46 @@ function parseData(entries) {
 }
 
 // Draw money image based on data
-function drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition) {
-    var image = document.getElementById(imageId),
-        imageWidth = image.offsetWidth,
-        imageHeight = image.offsetHeight,
-        wmCanvas = document.createElement('canvas'),
-        wmCtx = wmCanvas.getContext('2d');
+// function drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition) {
+//     var image = document.getElementById(imageId),
+//         imageWidth = image.offsetWidth,
+//         imageHeight = image.offsetHeight,
+//         wmCanvas = document.createElement('canvas'),
+//         wmCtx = wmCanvas.getContext('2d');
 
-    // Create temporary image
-    var newImage  = new Image();
-    newImage.src = imageUrl;
+//     // Create temporary image
+//     var newImage  = new Image();
+//     newImage.src = imageUrl;
 
-    // Load image and draw watermark
-    if (image) {
-        image.addEventListener('load', drawWatermark);
-    }
+//     // Load image and draw watermark
+//     if (image) {
+//         image.addEventListener('load', drawWatermark);
+//     }
 
-    // Draw watermark
-    function drawWatermark() {
-        // Set size of temporary image and watermark canvas
-        wmCanvas.width = newImage.width = imageWidth;
-        wmCanvas.height = newImage.height = imageHeight;
-        // Render watermark canvas with size above 
-        wmCtx.drawImage(newImage, 0, 0, imageWidth, imageHeight);
-        // Fill text, color and font
-        wmCtx.fillStyle = serialColor;
-        wmCtx.font = '16px NHL Washington';
-        wmCtx.fillText(serial, leftPosition, topPosition);
-        wmCtx.font = '700 17px Abel';
-        wmCtx.fillText(number, leftPosition + 30, topPosition);
-        // Fill more text if image is 5000d
-        if (imageUrl.includes('5000d')) {
-            wmCtx.font = '16px NHL Washington';
-            wmCtx.fillText(serial, leftPosition - 130, topPosition + 90);
-            wmCtx.font = '700 17px Abel';
-            wmCtx.fillText(number, leftPosition - 100, topPosition + 90);
-        }
-        // Replace image src by watermark canvas data url
-        image.src = wmCanvas.toDataURL('image/jpeg', 1);
-    }
-}
+//     // Draw watermark
+//     function drawWatermark() {
+//         // Set size of temporary image and watermark canvas
+//         wmCanvas.width = newImage.width = imageWidth;
+//         wmCanvas.height = newImage.height = imageHeight;
+//         // Render watermark canvas with size above 
+//         wmCtx.drawImage(newImage, 0, 0, imageWidth, imageHeight);
+//         // Fill text, color and font
+//         wmCtx.fillStyle = serialColor;
+//         wmCtx.font = '16px NHL Washington';
+//         wmCtx.fillText(serial, leftPosition, topPosition);
+//         wmCtx.font = '700 17px Abel';
+//         wmCtx.fillText(number, leftPosition + 30, topPosition);
+//         // Fill more text if image is 5000d
+//         if (imageUrl.includes('5000d')) {
+//             wmCtx.font = '16px NHL Washington';
+//             wmCtx.fillText(serial, leftPosition - 130, topPosition + 90);
+//             wmCtx.font = '700 17px Abel';
+//             wmCtx.fillText(number, leftPosition - 100, topPosition + 90);
+//         }
+//         // Replace image src by watermark canvas data url
+//         image.src = wmCanvas.toDataURL('image/jpeg', 1);
+//     }
+// }
 
 export default {
     name: "App",
@@ -419,52 +419,52 @@ export default {
             }
         },
 
-        drawMoney() {
-            if (this.results.length > 0) {
-                // Set data to draw money
-                let imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition;
-                this.results.forEach((result, index) => {
-                    switch(result.money) {
-                        case '0.5':
-                            imageId = result.money + index;
-                            imageUrl = './images/500d.jpg';
-                            serialColor = '#C54247';
-                            leftPosition = 50;
-                            topPosition = 170;
-                            break;
-                        case '1':
-                            imageId = result.money + index;
-                            imageUrl = './images/1000d.jpg';
-                            serialColor = '#C23927';
-                            leftPosition = 40;
-                            topPosition = 100;
-                            break;
-                        case '2':
-                            imageId = result.money + index;
-                            imageUrl = './images/2000d.jpg';
-                            serialColor = '#C23927';
-                            leftPosition = 210;
-                            topPosition = 85;
-                            break;
-                        case '5':
-                            imageId = result.money + index;
-                            imageUrl = './images/5000d.jpg';
-                            serialColor = '#C23927';
-                            leftPosition = 210;
-                            topPosition = 80;
-                            break;
-                        default:
-                            // Nothing
-                    }
+        // drawMoney() {
+        //     if (this.results.length > 0) {
+        //         // Set data to draw money
+        //         let imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition;
+        //         this.results.forEach((result, index) => {
+        //             switch(result.money) {
+        //                 case '0.5':
+        //                     imageId = result.money + index;
+        //                     imageUrl = './images/500d.jpg';
+        //                     serialColor = '#C54247';
+        //                     leftPosition = 50;
+        //                     topPosition = 170;
+        //                     break;
+        //                 case '1':
+        //                     imageId = result.money + index;
+        //                     imageUrl = './images/1000d.jpg';
+        //                     serialColor = '#C23927';
+        //                     leftPosition = 40;
+        //                     topPosition = 100;
+        //                     break;
+        //                 case '2':
+        //                     imageId = result.money + index;
+        //                     imageUrl = './images/2000d.jpg';
+        //                     serialColor = '#C23927';
+        //                     leftPosition = 210;
+        //                     topPosition = 85;
+        //                     break;
+        //                 case '5':
+        //                     imageId = result.money + index;
+        //                     imageUrl = './images/5000d.jpg';
+        //                     serialColor = '#C23927';
+        //                     leftPosition = 210;
+        //                     topPosition = 80;
+        //                     break;
+        //                 default:
+        //                     // Nothing
+        //             }
 
-                    serial = result.seri;
-                    number = result.day + result.month + result.year;
+        //             serial = result.seri;
+        //             number = result.day + result.month + result.year;
                     
-                    // Call draw image by canvas
-                    drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition);
-                })
-            }
-        },
+        //             // Call draw image by canvas
+        //             drawImageByCanvas(imageId, imageUrl, serialColor, serial, number, leftPosition, topPosition);
+        //         })
+        //     }
+        // },
 
         postData() {
             let date = new Date(),
@@ -594,10 +594,10 @@ export default {
         this.getData();
     },
 
-    updated() {
-        // Draw moeny
-        this.drawMoney();
-    }
+    // updated() {
+    //     // Draw moeny
+    //     this.drawMoney();
+    // }
 };
 </script>
 
@@ -641,57 +641,117 @@ export default {
 }
 
 .money {
-    // &-form-group {
-    //     position: relative;
-    // }
-
-    // &-serial,
-    // &-serial-2 {
-    //     color: #C23927;
-    //     letter-spacing: 2px;
-    //     position: absolute;
-    // }
-
-    // &-serial {
-    //     &-text {
-    //         font-family: 'NHL Washington', sans-serif;
-    //     }
-
-    //     &-number {
-    //         font-family: 'Abel', sans-serif;
-    //         font-weight: 700;
-    //         margin-left: 10px;
-    //     }
-
-    //     .money-type-500 & {
-    //         color: #C54247;
-    //         left: 40px;
-    //         top: 140px;
-    //     }
-
-    //     .money-type-1000 & {
-    //         left: 40px;
-    //         letter-spacing: 1px;
-    //         top: 78px;
-    //     }
+    &-form-group {
+        position: relative;
         
-    //     .money-type-2000 & {
-    //         left: 196px;
-    //         top: 62px;
-    //     }
+        .img-fluid {
+            pointer-events: none;
+        }
+    }
 
-    //     .money-type-5000 & {
-    //         left: 196px;
-    //         top: 55px;
-    //     }
-    // }
+    &-serial,
+    &-serial-2 {
+        color: #C23927;
+        font-size: 50%;
+        letter-spacing: 2px;
+        position: absolute;
 
-    // &-serial-2 {
-    //     .money-type-5000 & {
-    //         left: 72px;
-    //         top: 144px;
-    //     }
-    // }
+        @media (min-width: 400px) {
+            font-size: 70%;
+        }
+
+        @media (min-width: 576px) {
+            font-size: 100%;
+        }
+
+        @media (min-width: 768px) {
+            font-size: 60%;
+        }
+
+        @media (min-width: 992px) {
+            font-size: 90%;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 100%;
+        }
+    }
+
+    &-serial {
+        &-text {
+            font-family: 'NHL Washington', sans-serif;
+        }
+
+        &-number {
+            font-family: 'Abel', sans-serif;
+            font-weight: 700;
+            margin-left: 5px;
+
+            @media (min-width: 1200px) {
+                margin-left: 10px;
+            }
+        }
+
+        .money-type-500 & {
+            color: #C54247;
+            left: 9%;
+            top: 50%;
+
+            @media (min-width: 400px) {
+                top: 52%;
+            }
+
+            @media (min-width: 768px) {
+                top: 50%;
+            }
+
+            @media (min-width: 992px) {
+                top: 52%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 53%;
+            }
+        }
+
+        .money-type-1000 & {
+            left: 7%;
+            top: 28%;
+
+            @media (min-width: 400px) {
+                top: 29%;
+            }
+        }
+        
+        .money-type-2000 & {
+            left: 39%;
+            top: 23%;
+        }
+
+        .money-type-5000 & {
+            left: 39%;
+            top: 20%;
+
+            @media (min-width: 400px) {
+                top: 21%;
+            }
+        }
+    }
+
+    &-serial-2 {
+        .money-type-5000 & {
+            left: 15%;
+            top: 51%;
+
+            @media (min-width: 400px) {
+                top: 53%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 55%;
+            }
+        }
+    }
 
     &-price {
         display: flex;
