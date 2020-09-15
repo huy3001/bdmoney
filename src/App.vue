@@ -79,17 +79,17 @@
                         </b-alert>
 
                         <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                            <b-img :id="result.money + index" width="700" height="349" src="./images/500d.jpg" fluid alt="500d" v-if="result.money === '0.5'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money === '1'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money === '2'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money === '5'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="349" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
 
                             <span class="money-serial">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                             </span>
                             
-                            <span class="money-serial-2" v-if="result.money === '5'">
+                            <span class="money-serial-2" v-if="result.money == '5'">
                                 <span class="money-serial-text">{{ result.seri }}</span>
                                 <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                             </span>
@@ -341,7 +341,7 @@ export default {
 
         getData() {
             // Fetch data from Google sheet file
-            if (this.dataAPI !== '') {
+            if (this.dataAPI != '') {
                 axios.get(this.dataAPI)
                 .then(function(response) {
                     // handle success
@@ -355,7 +355,7 @@ export default {
         },
 
         searchMoney() {
-            if (this.day === null || this.month === null || this.year === null) {
+            if (this.day == null || this.month == null || this.year == null) {
                 // Show alert
                 this.alert = true;
             }
@@ -380,10 +380,10 @@ export default {
 
                     itemMonth = item.month;
 
-                    if (itemDay === selectedDay && itemMonth === selectedMonth) {
+                    if (itemDay == selectedDay && itemMonth == selectedMonth) {
                         item.year.forEach((value) => {
                             itemYear = parseInt(value);
-                            if (itemYear === selectedYear) {
+                            if (itemYear == selectedYear) {
                                 result = {
                                     'day': item.day,
                                     'month': item.month,
@@ -400,7 +400,7 @@ export default {
                 })
 
                 // Show or hide message when result is empty or not
-                if (resultList.length === 0) {
+                if (resultList.length == 0) {
                     this.empty = true;
                     this.infoMessage = false;
                 }
@@ -503,7 +503,7 @@ export default {
             };
 
             // Check if your user is authenticated then login
-            if (this.$gapi.isAuthenticated() !== true) {
+            if (this.$gapi.isAuthenticated() != true) {
                 this.$gapi.login()
             }
             else {
@@ -557,7 +557,7 @@ export default {
     watch: {
         month() {
             // Watch month change and get data base on selected month
-            if (this.month !== null) {
+            if (this.month != null) {
                 // Set data tab equal selected month
                 this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
                 // Update data API
