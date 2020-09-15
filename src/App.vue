@@ -79,7 +79,7 @@
                         </b-alert>
 
                         <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                            <b-img :id="result.money + index" width="700" height="349" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                            <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
                             <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
                             <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
                             <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
@@ -691,11 +691,15 @@ export default {
 
         .money-type-500 & {
             color: #C54247;
-            left: 9%;
-            top: 50%;
+            left: 8%;
+            top: 48%;
 
             @media (min-width: 400px) {
-                top: 52%;
+                top: 50%;
+            }
+
+            @media (min-width: 576px) {
+                top: 51%;
             }
 
             @media (min-width: 768px) {
@@ -703,16 +707,20 @@ export default {
             }
 
             @media (min-width: 992px) {
-                top: 52%;
+                top: 50%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 51%;
             }
         }
 
         .money-type-1000 & {
             left: 7%;
-            top: 28%;
+            top: 26%;
 
             @media (min-width: 400px) {
-                top: 29%;
+                top: 28%;
             }
         }
         
