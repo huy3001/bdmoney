@@ -109,8 +109,16 @@
 
                 <b-row>
                     <b-col cols="12">
+                        <b-alert show variant="danger" v-if="money">
+                            Bạn phải chọn ít nhất 1 tờ tiền
+                        </b-alert>
+
                         <b-alert show variant="info" v-if="infoMessage">
                             Thông tin đơn hàng
+                        </b-alert>
+
+                        <b-alert show variant="danger" v-if="info">
+                            Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng
                         </b-alert>
                     </b-col>
 
@@ -142,6 +150,7 @@
                                 v-model="name"
                                 placeholder="Họ và tên"
                                 required
+                                :state="info ? false : null"
                             ></b-form-input>
                         </b-form-group>
                     </b-col>
@@ -152,6 +161,7 @@
                                 v-model="phone"
                                 placeholder="Số diện thoại"
                                 required
+                                :state="info ? false : null"
                             ></b-form-input>
                         </b-form-group>
                     </b-col>
@@ -164,6 +174,7 @@
                                 rows="3"
                                 no-resize
                                 required
+                                :state="info ? false : null"
                             ></b-form-textarea>
                         </b-form-group>
                     </b-col>
@@ -289,6 +300,8 @@ export default {
             results: [],
             alert: false,
             empty: false,
+            info: false,
+            money: false,
             infoMessage: false,
             successMessage: false
         };
@@ -469,61 +482,80 @@ export default {
 
             // List selected value into selected money
             let selectedMoney = '';
-            this.selected.forEach((value) => {
-                selectedMoney = selectedMoney + value + ' - ';
-            });
-
-            // Gather all form value into an array
-            let formValue = [
-                    currentDay + '/' + currentMonth + '/' + currentYear,
-                    this.name,
-                    this.phone,
-                    this.address,
-                    selectedMoney,
-                    this.total + 'k',
-                    // this.note
-                ]
-            
-            // Params for accessing Google sheet
-            const params = {
-                // The ID of the spreadsheet to update.
-                spreadsheetId: spreadSheetID, 
-                // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
-                range: 'Tháng ' + this.dataTab, // this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
-                // How the input data should be interpreted.
-                valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
-                // How the input data should be inserted.
-                insertDataOption: 'INSERT_ROWS', //Choose OVERWRITE OR INSERT_ROWS
-            };
-
-            // Config value range body
-            const valueRangeBody = {
-                'majorDimension': 'ROWS', // log each entry as a new row (vs column)
-                'values': [formValue] // convert the object's values to an array
-            };
-
-            // Check if your user is authenticated then login
-            if (this.$gapi.isAuthenticated() != true) {
-                this.$gapi.login()
+            if (this.selected.length > 0) {
+                this.money = false;
+                this.selected.forEach((value) => {
+                    selectedMoney = selectedMoney + value + ' - ';
+                });
             }
             else {
-                // Show success message
-                this.successMessage = true;
-
-                // Hide form
-                this.show = false;
+                // Missing money
+                this.money = true;
+            }
+            
+            // Check if info is missing or not
+            if (this.name != '' && this.phone != '' && this.address != '') {
+                this.info = false;
+            }
+            else {
+                // Missing info
+                this.info = true;
             }
 
-            // Push data to Google sheet file
-            this.$gapi.getGapiClient().then((gapi) => {
-                let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
-                request.then(function(response) {
-                    // TODO: Change code below to process the `response` object
-                    console.log(response.result);
-                }, function(reason) {
-                    console.error('error: ' + reason.result.error.message);
-                });
-            })
+            // Check data is not empty and post
+            if (this.selected.length > 0 && this.name != '' && this.phone != '' && this.address != '') {
+                // Gather all form value into an array
+                let formValue = [
+                        currentDay + '/' + currentMonth + '/' + currentYear,
+                        this.name,
+                        this.phone,
+                        this.address,
+                        selectedMoney,
+                        this.total + 'k',
+                        // this.note
+                    ]
+                
+                // Params for accessing Google sheet
+                const params = {
+                    // The ID of the spreadsheet to update.
+                    spreadsheetId: spreadSheetID,
+                    // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
+                    range: 'Tháng ' + this.dataTab, // this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
+                    // How the input data should be interpreted.
+                    valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
+                    // How the input data should be inserted.
+                    insertDataOption: 'INSERT_ROWS' //Choose OVERWRITE OR INSERT_ROWS
+                };
+
+                // Config value range body
+                const valueRangeBody = {
+                    'majorDimension': 'ROWS', // log each entry as a new row (vs column)
+                    'values': [formValue] // convert the object's values to an array
+                };
+
+                // Check if your user is authenticated then login
+                if (this.$gapi.isAuthenticated() != true) {
+                    this.$gapi.login()
+                }
+                else {
+                    // Show success message
+                    this.successMessage = true;
+
+                    // Hide form
+                    this.show = false;
+                }
+
+                // Push data to Google sheet file
+                this.$gapi.getGapiClient().then((gapi) => {
+                    let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
+                    request.then(function(response) {
+                        // TODO: Change code below to process the `response` object
+                        console.log(response.result);
+                    }, function(reason) {
+                        console.error('error: ' + reason.result.error.message);
+                    });
+                })
+            }
         },
 
         backToForm() {
@@ -544,6 +576,8 @@ export default {
             this.results = [];
             this.alert = false;
             this.empty = false;
+            this.info = false;
+            this.money = false;
             this.infoMessage = false;
             this.successMessage = false;
             // Trick to reset/clear native browser form validation state
