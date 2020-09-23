@@ -204,11 +204,28 @@
 
 <script>
 import axios from 'axios';
+import {google} from 'googleapis';
+import {auth} from 'google-auth-library';
 import HelloWorld from "./components/HelloWorld.vue";
 
 var dataList = [];
 // URL of your blank Google sheet used to store data
 const spreadSheetID = '1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw';
+// Google sheets instance
+const sheets = google.sheets('v4');
+// Credentials
+const keys = {
+    "type": "service_account",
+    "project_id": "birthday-money-288815",
+    "private_key_id": "09a281b2120fe2f42ee74b9b3e85ab6c1c39d33a",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDdLw4Q6qtLmQvc\nXF/YIjGb64YI7OmAGxnk59MPoTcHOZLaNiNy/WOklybyJUVjlLrTMOcFBjJ2dekz\nfmSMIdnK/BoSIjsAvSZ2b/HYKO6eXhG3MS0exJxtLwiHxfscH7BXBayVdBzyWav9\nUM8s9VAAn8avbmlhU6BCwDGryn6Zmgccy0zSUR8CcXPGv9ppAuI554Q2Hr4Kwocy\n41QPDnInOVfBACVxmfw9GPeV8BhugS/wvIBqVJ1eZ1ZFL3OR7fcjql6xrkBtWPwd\n19egsPgKMaQh5IwlS5pKilcklx0ZAxdGRVYrVVhMWZVl54mbM5X8HcRYzoAPRgfs\nAFMzYFuFAgMBAAECggEACQeYP+mMp6/uU4cz5Ht04gQp+yhM2g2BL56lN7ChsfpQ\nO/dU2CdvD3OaQ+1wmUGjpOaMr+BSZBKpPBBvY2coYIiNOetK1FtkfBZS3bvCDhYS\nDBQGXwiwyCZQ51YWS84hYVQaeRl96wjtJBDN/GxhYT0km9nalH4Y/1CgVn6UT4nu\nTZBfEejKmK/ItGow05wxdU+ta9O6HnICDrhQuUw2tdEYmU8zijwqRDb3blFZTwiP\nMtnGP/Keu0V2ildLmev18g6aoeUrL5TZqACyCDTM9cLHT6fq7+hbpOSCZ4ALccAG\nWukZK7mLcmMBPigDO3R2TANDulhOB+/Hag+QCI3BQQKBgQDuGdFU8kLSGHsgnDRF\nQGn4/lSMMPgOCeWU23qz0NHXMbEMlryXZaCRM6GGs106XeWDi6z9vFFR+GYIHEtC\nYVOHHDNoLA95M0IVT/igtQXcfMpOb1DQau/OShXI1vWEHMsiY19ZCOeXi7oQThiX\nxqR5fJ/9oB9i7VyFmFkjVcZPYQKBgQDtz6xzwgZPc50cXl4cL7lLEXXoIuT1W2o4\n7wfZEWpLD5Oj31C5x69PuyCwue3yEurH9cilxi9vYru2wpL2d7CZ10iWHxEo2Pe7\n54d4SBD+gbUeQWj0PtnzNTW2J4GlD5jr2befYcxRuAQqg3mnZFogbGWLoGzdeupi\nborO1PZypQKBgQC/jcvIkILLreBZEvJGiJT5OfvhMYBPIw0t3glwYt5/Rz4OR7MA\nBkXQq34W9XRagbIlS5joJboyvSmw+rpddBmUCE8fTttAAcn3hXgcKqbFhSvpQEr+\n8hltmFLAWpf5KoUObG4IHk7bsBEIDxxf9vLZvjalAE5f82BNJo0IDXjW4QKBgQDD\nWjHD9cLRSZvqTerpJJsF+5Xr155Vn36mvlSoEBJNDsKtfykFM+/jg0jbZCD/FmMf\nV9w3sZIN4gFppHStWq0L8zmBeIvUDkeTaCJ0wF6Vc1+hNwJMgcTwcOlqdRGe0i1A\nsVyR5Pi+uHdTpSUuSNVwhRr1lBdZ6TrZGQ2V0oOQsQKBgDyiT7avU895gR+tWxm0\n90WRX/C70tcc4Y00l1VDC7/OzRJ1yP+vq+WX/1roSEVFmQbXxoNzXX6rNGNVERZF\nhPTGgP6l4HkWxa9nfWlDY9O+Wha1emY+NULQY1+gTVkiFo71b8VCNU4p9EXECErc\n958WCHYLvjBnh76mEBCi+haa\n-----END PRIVATE KEY-----\n",
+    "client_email": "service-account-1@birthday-money-288815.iam.gserviceaccount.com",
+    "client_id": "115924957823016828623",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account-1%40birthday-money-288815.iam.gserviceaccount.com"
+}
 
 // Parse data from API
 function parseData(entries) {
@@ -475,7 +492,8 @@ export default {
         // },
 
         postData() {
-            let date = new Date(),
+            let self = this,
+                date = new Date(),
                 currentDay = date.getDate(),
                 currentMonth = date.getMonth() + 1,
                 currentYear = date.getFullYear();
@@ -502,59 +520,124 @@ export default {
                 this.info = true;
             }
 
+            // Gather all form value into an array
+            let formValue = [
+                currentDay + '/' + currentMonth + '/' + currentYear,
+                this.name,
+                this.phone,
+                this.address,
+                selectedMoney,
+                this.total + 'k',
+                // this.note
+            ]
+
+            // Handle client request
+            async function clientRequest() {
+                const authClient = await clientAuthorize();
+                const request = {
+                    // The ID of the spreadsheet to update.
+                    spreadsheetId: spreadSheetID, // TODO: Update placeholder value.
+
+                    // The A1 notation of a range to search for a logical table of data.
+                    // Values are appended after the last row of the table.
+                    range: 'Tháng ' + self.dataTab, // TODO: Update placeholder value.
+
+                    // How the input data should be interpreted.
+                    valueInputOption: 'RAW', // TODO: Update placeholder value.
+
+                    // How the input data should be inserted.
+                    insertDataOption: 'INSERT_ROWS', // TODO: Update placeholder value.
+
+                    // TODO: Add desired properties to the request body.
+                    resource: {
+                        'majorDimension': 'ROWS', // log each entry as a new row (vs column)
+                        'values': [formValue] // convert the object's values to an array
+                    },
+
+                    auth: authClient,
+                };
+
+                try {
+                    const response = (await sheets.spreadsheets.values.append(request)).data;
+                    // TODO: Change code below to process the `response` object:
+                    if (response) {
+                        // Show success message
+                        self.successMessage = true;
+                        // Hide form
+                        self.show = false;
+                        // Success log
+                        console.log('Success');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            // Handle authorize client
+            async function clientAuthorize() {
+                // TODO: Change placeholder below to generate authentication credentials. See
+                // https://developers.google.com/sheets/quickstart/nodejs#step_3_set_up_the_sample
+                //
+                // Authorize using one of the following scopes:
+                //   'https://www.googleapis.com/auth/drive'
+                //   'https://www.googleapis.com/auth/drive.file'
+                //   'https://www.googleapis.com/auth/spreadsheets'
+
+                let authClient = auth.fromJSON(keys);
+                authClient.scopes = ['https://www.googleapis.com/auth/spreadsheets'];
+
+                if (authClient == null) {
+                    throw Error('authentication failed');
+                }
+
+                return authClient;
+            }
+
             // Check data is not empty and post
             if (this.selected.length > 0 && this.name != '' && this.phone != '' && this.address != '') {
-                // Gather all form value into an array
-                let formValue = [
-                        currentDay + '/' + currentMonth + '/' + currentYear,
-                        this.name,
-                        this.phone,
-                        this.address,
-                        selectedMoney,
-                        this.total + 'k',
-                        // this.note
-                    ]
-                
+                // Send request to Google sheets
+                clientRequest();
+
                 // Params for accessing Google sheet
-                const params = {
-                    // The ID of the spreadsheet to update.
-                    spreadsheetId: spreadSheetID,
-                    // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
-                    range: 'Tháng ' + this.dataTab, // this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
-                    // How the input data should be interpreted.
-                    valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
-                    // How the input data should be inserted.
-                    insertDataOption: 'INSERT_ROWS' //Choose OVERWRITE OR INSERT_ROWS
-                };
+                // const params = {
+                //     // The ID of the spreadsheet to update.
+                //     spreadsheetId: spreadSheetID,
+                //     // The A1 notation of a range to search for a logical table of data.Values will be appended after the last row of the table.
+                //     range: 'Tháng ' + this.dataTab, // this is the default spreadsheet name, so unless you've changed it, or are submitting to multiple sheets, you can leave this
+                //     // How the input data should be interpreted.
+                //     valueInputOption: 'RAW', //RAW = if no conversion or formatting of submitted data is needed. Otherwise USER_ENTERED
+                //     // How the input data should be inserted.
+                //     insertDataOption: 'INSERT_ROWS' //Choose OVERWRITE OR INSERT_ROWS
+                // };
 
                 // Config value range body
-                const valueRangeBody = {
-                    'majorDimension': 'ROWS', // log each entry as a new row (vs column)
-                    'values': [formValue] // convert the object's values to an array
-                };
+                // const valueRangeBody = {
+                //     'majorDimension': 'ROWS', // log each entry as a new row (vs column)
+                //     'values': [formValue] // convert the object's values to an array
+                // };
 
                 // Check if your user is authenticated then login
-                if (this.$gapi.isAuthenticated() != true) {
-                    this.$gapi.login()
-                }
-                else {
-                    // Show success message
-                    this.successMessage = true;
+                // if (this.$gapi.isAuthenticated() != true) {
+                //     this.$gapi.login()
+                // }
+                // else {
+                //     // Show success message
+                //     this.successMessage = true;
 
-                    // Hide form
-                    this.show = false;
-                }
+                //     // Hide form
+                //     this.show = false;
+                // }
 
                 // Push data to Google sheet file
-                this.$gapi.getGapiClient().then((gapi) => {
-                    let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
-                    request.then(function(response) {
-                        // TODO: Change code below to process the `response` object
-                        console.log(response.result);
-                    }, function(reason) {
-                        console.error('error: ' + reason.result.error.message);
-                    });
-                })
+                // this.$gapi.getGapiClient().then((gapi) => {
+                //     let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
+                //     request.then(function(response) {
+                //         // TODO: Change code below to process the `response` object
+                //         console.log(response.result);
+                //     }, function(reason) {
+                //         console.error('error: ' + reason.result.error.message);
+                //     });
+                // })
             }
         },
 

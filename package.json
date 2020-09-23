@@ -12,6 +12,8 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
+    "google-auth-library": "^6.1.0",
+    "googleapis": "^48.0.0",
     "vue": "^2.6.11",
     "vue-gapi": "^0.3.1"
   },
