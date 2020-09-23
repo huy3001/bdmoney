@@ -125,7 +125,7 @@
                     <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
                         <b-list-group class="text-left mb-3">
                             <b-list-group-item>
-                                <span>Bạn đã chọn:</span>
+                                <span class="mr-1">Bạn đã chọn:</span>
                                 <span 
                                     class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
                                     v-for="(item, index) in selected" 
@@ -134,12 +134,19 @@
                                     {{ item }}
                                 </span>    
                             </b-list-group-item>
-                            <b-list-group-item>Giá tiền: {{ price | currencyFormat }} / tờ</b-list-group-item>
-                            <b-list-group-item>Phí ship: {{ ship | currencyFormat }}</b-list-group-item>
-                            <b-list-group-item>Tổng tiền: {{ total | currencyFormat }}</b-list-group-item>
                             <b-list-group-item>
-                                <span v-if="selected.length < 2">( Chọn mua từ 2 tờ trở lên để được free ship )</span>
-                                <span v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                                Giá tiền: {{ price | currencyFormat }} / tờ
+                            </b-list-group-item>
+                            <b-list-group-item>
+                                <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
+                                <span class="money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
+                                <span class="money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                            </b-list-group-item>
+                            <b-list-group-item>
+                                <strong class="money-total">Tổng tiền: {{ total | currencyFormat }}</strong>
+                            </b-list-group-item>
+                            <b-list-group-item>
+                                <span class="money-payment">Hình thức thanh toán:</span>
                             </b-list-group-item>
                         </b-list-group>
                     </b-col>
@@ -159,7 +166,7 @@
                         <b-form-group id="phone">
                             <b-form-input
                                 v-model="phone"
-                                placeholder="Số diện thoại"
+                                placeholder="Số điện thoại"
                                 required
                                 :state="info ? false : null"
                             ></b-form-input>
@@ -181,8 +188,8 @@
 
                     <b-col cols="12" v-if="infoMessage">
                         <b-form-group id="action">
-                            <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
                             <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
+                            <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -396,7 +403,11 @@ export default {
                 date = new Date(),
                 currentDay = date.getDate(),
                 currentMonth = date.getMonth() + 1,
-                currentYear = date.getFullYear();
+                currentYear = date.getFullYear(),
+                currentHour = date.getHours(),
+                currentMinute = date.getMinutes(),
+                currentSecond = date.getSeconds(),
+                currentTime = currentDay + '-' + currentMonth + '-' + currentYear + ' ' + currentHour + ':' + currentMinute + ':' + currentSecond;
 
             // List selected value into selected money
             let selectedMoney = '';
@@ -422,7 +433,7 @@ export default {
 
             // Gather all form value into an array
             let formValue = [
-                currentDay + '/' + currentMonth + '/' + currentYear,
+                currentTime,
                 this.name,
                 this.phone,
                 this.address,
@@ -440,7 +451,7 @@ export default {
 
                     // The A1 notation of a range to search for a logical table of data.
                     // Values are appended after the last row of the table.
-                    range: 'Tháng ' + self.dataTab, // TODO: Update placeholder value.
+                    range: 'Đơn hàng', // TODO: Update placeholder value.
 
                     // How the input data should be interpreted.
                     valueInputOption: 'RAW', // TODO: Update placeholder value.
@@ -461,11 +472,6 @@ export default {
                     const response = (await sheets.spreadsheets.values.append(request)).data;
                     // TODO: Change code below to process the `response` object:
                     if (response) {
-                        // Show success message
-                        self.successMessage = true;
-                        // Hide form
-                        self.show = false;
-                        // Success log
                         console.log('Success');
                     }
                 } catch (err) {
@@ -495,6 +501,10 @@ export default {
 
             // Check data is not empty and post
             if (this.selected.length > 0 && this.name != '' && this.phone != '' && this.address != '') {
+                // Show success message
+                self.successMessage = true;
+                // Hide form
+                self.show = false;
                 // Send request to Google sheets
                 clientRequest();
             }
@@ -724,9 +734,12 @@ export default {
         font-size: 80%;
     }
 
-    &-price {
-        display: flex;
-        justify-content: space-between;
+    &-ship-note {
+        font-size: 75%;
+
+        @media (min-width: 768px) {
+            font-size: 80%;
+        }
     }
 }
 </style>
