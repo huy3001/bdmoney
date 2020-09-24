@@ -1,193 +1,277 @@
 <template>
     <div id="app">
-        <b-container>
-            <HelloWorld msg="Nhập sinh nhật của bạn hoặc người thương" />
+        <div class="money-page">
+            <b-container>
+                <HelloWorld msg="Nhập sinh nhật của bạn hoặc người thương" />
 
-            <!-- Success block -->
-            <b-row>
-                <b-col cols="12">
-                    <b-alert show variant="success" v-if="successMessage">
-                        Cảm ơn bạn đã đặt hàng, chúng tôi sẽ liên hệ và gửi hàng đến bạn sớm nhất có thể 
-                    </b-alert>
-                    <b-button type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
-                </b-col>
-            </b-row>
-
-            <!-- Choose birthday form -->
-            <b-form id="birthday" @reset="onReset" v-if="show">
-                <b-row>
-                    <b-col cols="12" sm="12" md="4" lg="3">
-                        <b-form-group id="day-selection">
-                            <b-form-select
-                                id="day"
-                                v-model="day"
-                                :options="days"
-                                required
-                            ></b-form-select>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="4" lg="3">
-                        <b-form-group id="month-selection">
-                            <b-form-select
-                                id="month"
-                                v-model="month"
-                                :options="months"
-                                required
-                            ></b-form-select>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="4" lg="3">
-                        <b-form-group id="year-selection">
-                            <b-form-select
-                                id="month"
-                                v-model="year"
-                                :options="years"
-                                required
-                            ></b-form-select>
-                        </b-form-group>
-                    </b-col>
-
-                     <b-col cols="12" sm="12" md="12" lg="3">
-                        <b-form-group id="search">
-                            <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
-                        </b-form-group>
-                    </b-col>
-                </b-row>
-
+                <!-- Success block -->
                 <b-row>
                     <b-col cols="12">
-                        <b-alert show variant="danger" v-if="alert">
-                            Vui lòng chọn ngày bạn muốn tìm
+                        <b-alert show variant="success" v-if="successMessage">
+                            Cảm ơn bạn đã đặt hàng, chúng tôi sẽ liên hệ và gửi hàng đến bạn sớm nhất có thể 
                         </b-alert>
-
-                        <b-alert show variant="warning" v-if="empty">
-                            Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
-                        </b-alert>
-                        
-                        <b-alert show variant="info" v-if="infoMessage">
-                            Những tờ tiền sinh nhật của bạn
-                        </b-alert>
+                        <b-button type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
                     </b-col>
                 </b-row>
 
-                <b-row>
-                    <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
-                        <b-alert show variant="success">
-                            Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + ' ' + result.day + result.month + result.year }}
-                        </b-alert>
+                <!-- Choose birthday form -->
+                <b-form id="birthday" @reset="onReset" v-if="show">
+                    <b-row>
+                        <b-col cols="12" sm="12" md="4" lg="3">
+                            <b-form-group id="day-selection">
+                                <b-form-select
+                                    id="day"
+                                    v-model="day"
+                                    :options="days"
+                                    required
+                                ></b-form-select>
+                            </b-form-group>
+                        </b-col>
 
-                        <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                            <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                            <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                        <b-col cols="12" sm="12" md="4" lg="3">
+                            <b-form-group id="month-selection">
+                                <b-form-select
+                                    id="month"
+                                    v-model="month"
+                                    :options="months"
+                                    required
+                                ></b-form-select>
+                            </b-form-group>
+                        </b-col>
 
-                            <span class="money-serial">
-                                <span class="money-serial-text">{{ result.seri }}</span>
-                                <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                            </span>
+                        <b-col cols="12" sm="12" md="4" lg="3">
+                            <b-form-group id="year-selection">
+                                <b-form-select
+                                    id="month"
+                                    v-model="year"
+                                    :options="years"
+                                    required
+                                ></b-form-select>
+                            </b-form-group>
+                        </b-col>
+
+                        <b-col cols="12" sm="12" md="12" lg="3">
+                            <b-form-group id="search">
+                                <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+
+                    <b-row>
+                        <b-col cols="12">
+                            <b-alert show variant="danger" v-if="alert">
+                                Vui lòng chọn ngày bạn muốn tìm
+                            </b-alert>
+
+                            <b-alert show variant="warning" v-if="empty">
+                                Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
+                            </b-alert>
                             
-                            <span class="money-serial-2" v-if="result.money == '5'">
-                                <span class="money-serial-text">{{ result.seri }}</span>
-                                <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                            </span>
+                            <b-alert show variant="info" v-if="infoMessage">
+                                Những tờ tiền sinh nhật của bạn
+                            </b-alert>
+                        </b-col>
+                    </b-row>
 
-                            <b-form-checkbox
-                                class="mt-2"
-                                v-model="selected"
-                                :id="'money-checkbox-' + index"
-                                :name="'money-checkbox-' + index"
-                                :value="result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year"
-                            >
-                                Chọn mua
-                            </b-form-checkbox>
-                        </b-form-group>
-                    </b-col>
-                </b-row>
+                    <b-row>
+                        <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
+                            <b-alert show variant="success">
+                                Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + ' ' + result.day + result.month + result.year }}
+                            </b-alert>
 
-                <b-row>
-                    <b-col cols="12">
-                        <b-alert show variant="danger" v-if="money">
-                            Bạn phải chọn ít nhất 1 tờ tiền
-                        </b-alert>
+                            <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
+                                <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                                <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
 
-                        <b-alert show variant="info" v-if="infoMessage">
-                            Thông tin đơn hàng
-                        </b-alert>
+                                <span class="money-serial">
+                                    <span class="money-serial-text">{{ result.seri }}</span>
+                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
+                                </span>
+                                
+                                <span class="money-serial-2" v-if="result.money == '5'">
+                                    <span class="money-serial-text">{{ result.seri }}</span>
+                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
+                                </span>
 
-                        <b-alert show variant="danger" v-if="info">
-                            Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng
-                        </b-alert>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                        <b-list-group class="text-left mb-3">
-                            <b-list-group-item>
-                                <span>Bạn đã chọn:</span>
-                                <span 
-                                    class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
-                                    v-for="(item, index) in selected" 
-                                    :key="index"
+                                <b-form-checkbox
+                                    class="mt-2"
+                                    v-model="selected"
+                                    :id="'money-checkbox-' + index"
+                                    :name="'money-checkbox-' + index"
+                                    :value="result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year"
                                 >
-                                    {{ item }}
-                                </span>    
-                            </b-list-group-item>
-                            <b-list-group-item>Giá tiền: {{ price | currencyFormat }} / tờ</b-list-group-item>
-                            <b-list-group-item>Phí ship: {{ ship | currencyFormat }}</b-list-group-item>
-                            <b-list-group-item>Tổng tiền: {{ total | currencyFormat }}</b-list-group-item>
-                            <b-list-group-item>
-                                <span v-if="selected.length < 2">( Chọn mua từ 2 tờ trở lên để được free ship )</span>
-                                <span v-if="selected.length > 1">( Bạn đã được free ship )</span>
-                            </b-list-group-item>
-                        </b-list-group>
+                                    Chọn mua
+                                </b-form-checkbox>
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+
+                    <b-row>
+                        <b-col cols="12">
+                            <b-alert show variant="info" v-if="infoMessage">
+                                Thông tin đơn hàng
+                            </b-alert>
+
+                            <b-alert show variant="danger" v-if="dataMissing">
+                                <p class="mb-0" v-if="selected.length == 0">Bạn phải chọn ít nhất 1 tờ tiền</p>
+                                <p class="mb-0" v-if="bank == ''">Vui lòng chọn hình thức thanh toán</p>
+                                <p class="mb-0" v-if="infoMissing">Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng</p>
+                            </b-alert>
+                        </b-col>
+
+                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                            <b-list-group class="text-left mb-3">
+                                <b-list-group-item>
+                                    <span class="mr-1">Bạn đã chọn:</span>
+                                    <span 
+                                        class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
+                                        v-for="(item, index) in selected" 
+                                        :key="index"
+                                    >
+                                        {{ item }}
+                                    </span>    
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    Giá tiền: {{ price | currencyFormat }} / tờ
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
+                                    <span class="money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
+                                    <span class="money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <strong class="money-total">Tổng tiền: {{ total | currencyFormat }}</strong>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <span>Hình thức thanh toán:</span>
+
+                                    <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash">
+                                        <span class="money-payment-text">Thanh toán khi nhận hàng</span>
+                                    </b-form-radio>
+
+                                    <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
+                                        <span class="money-payment-text">Chuyển khoản trước (Miễn phí ship)</span>
+                                    </b-form-radio>
+
+                                    <b-card no-body class="d-flex my-3 money-payment-bank" v-if="payment == 'bank'">
+                                        <b-form-radio class="p-4 pl-0 money-bank" v-model="bank" name="bank-transfer" value="Vietcombank">
+                                            <b-img :class="['border', {'border-success': bank == 'Vietcombank'}, 'money-bank-logo']" width="200" height="200" src="./images/vietcombank.jpg" fluid alt="Vietcombank"></b-img>
+
+                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == 'Vietcombank'">
+                                                Phùng Văn Hùng
+                                                <br>
+                                                Vietcombank
+                                                <br>
+                                                0011003279891
+                                            </p>
+                                        </b-form-radio>
+
+                                        <b-form-radio class="p-4 pl-0 money-bank" v-model="bank" name="bank-transfer" value="Techcombank">
+                                            <b-img :class="['border', {'border-success': bank == 'Techcombank'}, 'money-bank-logo']" width="200" height="200" src="./images/techcombank.jpg" fluid alt="Techcombank"></b-img>
+
+                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == 'Techcombank'">
+                                                Phùng Văn Hùng
+                                                <br>
+                                                Techcombank
+                                                <br>
+                                                19024297515885
+                                            </p>
+                                        </b-form-radio>
+                                    </b-card>
+                                </b-list-group-item>
+                            </b-list-group>
+                        </b-col>
+
+                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                            <b-form-group id="name">
+                                <b-form-input
+                                    v-model="name"
+                                    placeholder="Họ và tên"
+                                    required
+                                    :state="infoMissing ? false : null"
+                                ></b-form-input>
+                            </b-form-group>
+                        </b-col>
+
+                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                            <b-form-group id="phone">
+                                <b-form-input
+                                    v-model="phone"
+                                    placeholder="Số điện thoại"
+                                    required
+                                    :state="infoMissing ? false : null"
+                                ></b-form-input>
+                            </b-form-group>
+                        </b-col>
+
+                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
+                            <b-form-group id="address">
+                                <b-form-textarea
+                                    v-model="address"
+                                    placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
+                                    rows="3"
+                                    no-resize
+                                    required
+                                    :state="infoMissing ? false : null"
+                                ></b-form-textarea>
+                            </b-form-group>
+                        </b-col>
+
+                        <b-col cols="12" v-if="infoMessage">
+                            <b-form-group id="action">
+                                <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
+                                <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+                </b-form>
+            </b-container>
+        </div>
+
+        <div class="bg-dark text-white py-4 money-footer">
+            <b-container>
+                <b-row>
+                    <b-col cols="12" sm="12" md="6">
+                        <b-card no-body class="bg-dark border-0 text-white money-store">
+                            <p>
+                                <b-link class="text-white money-website" href="http://tiensinhnhat.vn">www.TienSinhNhat.vn</b-link>
+                            </p>
+                            <p>
+                                Mr. Hùng - <b-link class="text-white money-contact" href="tel:0888000868">0888.000.868</b-link>
+                            </p>
+                            <p>
+                                Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội
+                            </p>
+                        </b-card>
                     </b-col>
 
-                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                        <b-form-group id="name">
-                            <b-form-input
-                                v-model="name"
-                                placeholder="Họ và tên"
-                                required
-                                :state="info ? false : null"
-                            ></b-form-input>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                        <b-form-group id="phone">
-                            <b-form-input
-                                v-model="phone"
-                                placeholder="Số diện thoại"
-                                required
-                                :state="info ? false : null"
-                            ></b-form-input>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                        <b-form-group id="address">
-                            <b-form-textarea
-                                v-model="address"
-                                placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
-                                rows="3"
-                                no-resize
-                                required
-                                :state="info ? false : null"
-                            ></b-form-textarea>
-                        </b-form-group>
-                    </b-col>
-
-                    <b-col cols="12" v-if="infoMessage">
-                        <b-form-group id="action">
-                            <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
-                            <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
-                        </b-form-group>
+                    <b-col cols="12" sm="12" md="6">
+                        <div class="money-facebook">
+                            <div 
+                                class="fb-page" 
+                                data-href="https://www.facebook.com/TienSinhNhat.vn" 
+                                data-tabs="" 
+                                data-width="" 
+                                data-height="" 
+                                data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"
+                            >
+                                <blockquote cite="https://www.facebook.com/TienSinhNhat.vn" class="fb-xfbml-parse-ignore">
+                                    <a href="https://www.facebook.com/TienSinhNhat.vn">
+                                        Tiền Sinh Nhật
+                                    </a>
+                                </blockquote>
+                            </div>
+                        </div>
                     </b-col>
                 </b-row>
-            </b-form>
-        </b-container>
+            </b-container>
+        </div>
     </div>
 </template>
 
@@ -248,6 +332,8 @@ export default {
             month: null,
             year: null,
             selected: [],
+            payment: '',
+            bank: '',
             name: '',
             phone: '',
             address: '',
@@ -264,8 +350,8 @@ export default {
             results: [],
             alert: false,
             empty: false,
-            info: false,
-            money: false,
+            dataMissing: false,
+            infoMissing: false,
             infoMessage: false,
             successMessage: false
         };
@@ -392,44 +478,53 @@ export default {
         },
 
         postData() {
-            let self = this,
-                date = new Date(),
+            let date = new Date(),
                 currentDay = date.getDate(),
                 currentMonth = date.getMonth() + 1,
-                currentYear = date.getFullYear();
+                currentYear = date.getFullYear(),
+                currentHour = date.getHours(),
+                currentMinute = date.getMinutes(),
+                currentSecond = date.getSeconds(),
+                currentTime = currentDay + '-' + currentMonth + '-' + currentYear + ' ' + currentHour + ':' + currentMinute + ':' + currentSecond;
 
             // List selected value into selected money
             let selectedMoney = '';
             if (this.selected.length > 0) {
-                this.money = false;
                 this.selected.forEach((value) => {
                     selectedMoney = selectedMoney + value + ' - ';
                 });
             }
-            else {
-                // Missing money
-                this.money = true;
-            }
-            
-            // Check if info is missing or not
-            if (this.name != '' && this.phone != '' && this.address != '') {
-                this.info = false;
+
+            // Get payment method
+            let paymentMethod = '';
+            if (this.payment == 'cash') {
+                paymentMethod = 'Tiền mặt khi nhận hàng';
             }
             else {
-                // Missing info
-                this.info = true;
+                if (this.bank != '') {
+                    paymentMethod = 'Chuyển khoản ' + this.bank;
+                }
             }
 
             // Gather all form value into an array
             let formValue = [
-                currentDay + '/' + currentMonth + '/' + currentYear,
+                currentTime,
                 this.name,
                 this.phone,
                 this.address,
                 selectedMoney,
                 this.total + 'k',
-                // this.note
+                paymentMethod
             ]
+            
+            // Check if client is missing or not
+            if (this.name != '' && this.phone != '' && this.address != '') {
+                this.infoMissing = false;
+            }
+            else {
+                // Missing client
+                this.infoMissing = true;
+            }
 
             // Handle client request
             async function clientRequest() {
@@ -440,7 +535,7 @@ export default {
 
                     // The A1 notation of a range to search for a logical table of data.
                     // Values are appended after the last row of the table.
-                    range: 'Tháng ' + self.dataTab, // TODO: Update placeholder value.
+                    range: 'Đơn hàng', // TODO: Update placeholder value.
 
                     // How the input data should be interpreted.
                     valueInputOption: 'RAW', // TODO: Update placeholder value.
@@ -461,11 +556,6 @@ export default {
                     const response = (await sheets.spreadsheets.values.append(request)).data;
                     // TODO: Change code below to process the `response` object:
                     if (response) {
-                        // Show success message
-                        self.successMessage = true;
-                        // Hide form
-                        self.show = false;
-                        // Success log
                         console.log('Success');
                     }
                 } catch (err) {
@@ -494,9 +584,18 @@ export default {
             }
 
             // Check data is not empty and post
-            if (this.selected.length > 0 && this.name != '' && this.phone != '' && this.address != '') {
+            if (this.selected.length > 0 && this.payment != '' && this.bank != '' && this.name != '' && this.phone != '' && this.address != '') {
+                this.dataMissing = false;
+                // Show success message
+                this.successMessage = true;
+                // Hide form
+                this.show = false;
                 // Send request to Google sheets
                 clientRequest();
+            }
+            else {
+                // Missing info
+                this.dataMissing = true;
             }
         },
 
@@ -511,14 +610,16 @@ export default {
             this.month = null;
             this.year = null;
             this.selected = [];
+            this.payment = '';
+            this.bank = '';
             this.name = '';
             this.phone = '';
             this.address = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
-            this.info = false;
-            this.money = false;
+            this.dataMissing = false;
+            this.infoMissing = false;
             this.infoMessage = false;
             this.successMessage = false;
             // Trick to reset/clear native browser form validation state
@@ -549,6 +650,20 @@ export default {
             }
             else {
                 this.ship = 30
+            }
+        },
+
+        payment() {
+            // Watch payment change and update ship fee
+            if (this.payment == 'bank') {
+                this.bank = '';
+                this.ship = 0;
+            }
+            else {
+                this.bank = this.payment;
+                if (this.selected.length < 2) {
+                    this.ship = 30
+                }
             }
         }
     },
@@ -610,6 +725,12 @@ export default {
 }
 
 .money {
+    &-page {
+        @media (min-width: 768px) {
+            padding-bottom: 260px;
+        }
+    }
+    
     &-form-group {
         .img-fluid {
             pointer-events: none;
@@ -724,9 +845,69 @@ export default {
         font-size: 80%;
     }
 
-    &-price {
-        display: flex;
-        justify-content: space-between;
+    &-ship-note {
+        font-size: 70%;
+
+        @media (min-width: 768px) {
+            font-size: 80%;
+        }
+    }
+
+    &-payment {
+        &-text {
+            font-size: 90%;
+
+            @media (min-width: 768px) {
+                font-size: 100%;
+            }
+        }
+
+        &-bank {
+            flex-flow: row nowrap;
+        }
+    }
+
+    &-bank {
+        width: 100%;
+
+        @media (min-width: 768px) {
+            width: 50%;
+        }
+
+        &-info {
+            font-size: 90%;
+
+            @media (min-width: 768px) {
+                font-size: 100%;
+            }
+        }
+
+        .custom-control-label {
+            &::before,
+            &::after {
+                left: .5rem;
+                top: .5rem;
+            }
+        }
+    }
+
+    &-footer {
+        @media (min-width: 768px) {
+            bottom: 0;
+            left: 0;
+            position: fixed;
+            width: 100%;
+            z-index: 111;
+        }
+    }
+
+    &-store {
+        text-align: left;
+    }
+
+    &-facebook {
+        max-width: 100%;
+        text-align: right;
     }
 }
 </style>
