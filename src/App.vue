@@ -921,10 +921,29 @@ export default {
 
     &-slogan {
         font-family: 'Times New Roman', sans-serif;
+
+        @media (min-width: 768px) {
+            margin-top: 1rem;
+        }
     }
 
     &-store {
+        font-size: 80%;
+        margin-bottom: .5rem;
         text-align: left;
+
+        @media (min-width: 768px) {
+            font-size: 100%;
+            margin-bottom: 0;
+        }
+
+        p {
+            margin-bottom: .5rem;
+
+            @media (min-width: 768px) {
+                margin-bottom: 1rem;
+            }
+        }
     }
 
     &-facebook {
