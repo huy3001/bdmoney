@@ -1,8 +1,11 @@
 <template>
     <div id="app">
-        <div class="money-page">
+        <div class="py-4 money-page">
             <b-container>
-                <HelloWorld msg="Nhập sinh nhật của bạn hoặc người thương" />
+                <!-- Title-->
+                <h1 class="mb-4 money-title">
+                    Nhập sinh nhật của bạn hoặc người thương
+                </h1>
 
                 <!-- Success block -->
                 <b-row>
@@ -10,7 +13,7 @@
                         <b-alert show variant="success" v-if="successMessage">
                             Cảm ơn bạn đã đặt hàng, chúng tôi sẽ liên hệ và gửi hàng đến bạn sớm nhất có thể 
                         </b-alert>
-                        <b-button type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
+                        <b-button class="mb-4" type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
                     </b-col>
                 </b-row>
 
@@ -116,7 +119,8 @@
 
                             <b-alert show variant="danger" v-if="dataMissing">
                                 <p class="mb-0" v-if="selected.length == 0">Bạn phải chọn ít nhất 1 tờ tiền</p>
-                                <p class="mb-0" v-if="bank == ''">Vui lòng chọn hình thức thanh toán</p>
+                                <p class="mb-0" v-if="payment == ''">Vui lòng chọn hình thức thanh toán</p>
+                                <p class="mb-0" v-if="payment != '' && bank == ''">Bạn cần chọn ngân hàng để chuyển khoản</p>
                                 <p class="mb-0" v-if="infoMissing">Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng</p>
                             </b-alert>
                         </b-col>
@@ -140,8 +144,8 @@
 
                                 <b-list-group-item>
                                     <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
-                                    <span class="money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
-                                    <span class="money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
+                                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
                                 </b-list-group-item>
 
                                 <b-list-group-item>
@@ -157,9 +161,10 @@
 
                                     <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
                                         <span class="money-payment-text">Chuyển khoản trước (Miễn phí ship)</span>
+                                        <p class="my-2 text-secondary money-payment-note" v-if="payment == 'bank'">Nội dung chuyển khoản: Tên + SDT đặt hàng</p>
                                     </b-form-radio>
 
-                                    <b-card no-body class="d-flex my-3 money-payment-bank" v-if="payment == 'bank'">
+                                    <b-card no-body class="d-flex my-2 money-payment-bank" v-if="payment == 'bank'">
                                         <b-form-radio class="p-4 pl-0 money-bank" v-model="bank" name="bank-transfer" value="Vietcombank">
                                             <b-img :class="['border', {'border-success': bank == 'Vietcombank'}, 'money-bank-logo']" width="200" height="200" src="./images/vietcombank.jpg" fluid alt="Vietcombank"></b-img>
 
@@ -239,14 +244,20 @@
                 <b-row>
                     <b-col cols="12" sm="12" md="6">
                         <b-card no-body class="bg-dark border-0 text-white money-store">
+                            <p class="font-italic font-weight-bold text-warning money-slogan">
+                                Tiền Sinh Nhật - Món Quà Nhỏ, Ý Nghĩa Lớn
+                            </p>
                             <p>
+                                <b-icon icon="globe2" class="mr-2"></b-icon>
                                 <b-link class="text-white money-website" href="http://tiensinhnhat.vn">www.TienSinhNhat.vn</b-link>
                             </p>
                             <p>
-                                Mr. Hùng - <b-link class="text-white money-contact" href="tel:0888000868">0888.000.868</b-link>
+                                <b-icon icon="telephone" class="mr-2"></b-icon>
+                                <span>Mr. Hùng - <b-link class="text-white money-contact" href="tel:0888000868">0888.000.868</b-link></span>
                             </p>
                             <p>
-                                Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội
+                                <b-icon icon="geo-alt" class="mr-2"></b-icon>
+                                <span>Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội</span>
                             </p>
                         </b-card>
                     </b-col>
@@ -279,7 +290,6 @@
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
-import HelloWorld from "./components/HelloWorld.vue";
 
 var dataList = [];
 // URL of your blank Google sheet used to store data
@@ -321,10 +331,6 @@ function parseData(entries) {
 
 export default {
     name: "App",
-    components: {
-        HelloWorld,
-    },
-
     data() {
         return {
             show: true,
@@ -684,6 +690,7 @@ export default {
 <style lang="scss">
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/bootstrap-vue/src/index.scss";
+@import "node_modules/bootstrap-vue/src/icons.scss";
 
 @font-face {
     font-family: 'Abel';
@@ -716,8 +723,7 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
+    color: #000000;
 }
 
 .list-group-item {
@@ -726,8 +732,22 @@ export default {
 
 .money {
     &-page {
+        min-height: 50vh;
+
         @media (min-width: 768px) {
-            padding-bottom: 260px;
+            min-height: 100vh;
+        }
+    }
+
+    &-title {
+        font-size: 1.5rem;
+
+        @media (min-width: 768px) {
+            font-size: 2rem;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 2.5rem;
         }
     }
     
@@ -862,16 +882,24 @@ export default {
             }
         }
 
+        &-note {
+            font-size: 70%;
+
+            @media (min-width: 768px) {
+                font-size: 80%;
+            }
+        }
+
         &-bank {
             flex-flow: row nowrap;
         }
     }
 
     &-bank {
-        width: 100%;
-
-        @media (min-width: 768px) {
-            width: 50%;
+        &-logo {
+            @media (min-width: 768px) {
+                max-width: 125px;
+            }
         }
 
         &-info {
@@ -891,14 +919,8 @@ export default {
         }
     }
 
-    &-footer {
-        @media (min-width: 768px) {
-            bottom: 0;
-            left: 0;
-            position: fixed;
-            width: 100%;
-            z-index: 111;
-        }
+    &-slogan {
+        font-family: 'Times New Roman', sans-serif;
     }
 
     &-store {
@@ -906,8 +928,12 @@ export default {
     }
 
     &-facebook {
-        max-width: 100%;
-        text-align: right;
+        width: 100%;
+        text-align: center;
+
+        @media (min-width: 768px) {
+            text-align: right;
+        }
     }
 }
 </style>
