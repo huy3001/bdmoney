@@ -238,51 +238,6 @@
                 </b-form>
             </b-container>
         </div>
-
-        <div class="bg-dark text-white py-4 money-footer">
-            <b-container>
-                <b-row>
-                    <b-col cols="12" sm="12" md="6">
-                        <b-card no-body class="bg-dark border-0 text-white money-store">
-                            <p class="font-italic font-weight-bold text-warning money-slogan">
-                                Tiền Sinh Nhật - Món Quà Nhỏ, Ý Nghĩa Lớn
-                            </p>
-                            <p>
-                                <b-icon icon="globe2" class="mr-2"></b-icon>
-                                <b-link class="text-white money-website" href="http://tiensinhnhat.vn">www.TienSinhNhat.vn</b-link>
-                            </p>
-                            <p>
-                                <b-icon icon="telephone" class="mr-2"></b-icon>
-                                <span>Mr. Hùng - <b-link class="text-white money-contact" href="tel:0888000868">0888.000.868</b-link></span>
-                            </p>
-                            <p>
-                                <b-icon icon="geo-alt" class="mr-2"></b-icon>
-                                <span>Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội</span>
-                            </p>
-                        </b-card>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="6">
-                        <div class="money-facebook">
-                            <div 
-                                class="fb-page" 
-                                data-href="https://www.facebook.com/TienSinhNhat.vn" 
-                                data-tabs="" 
-                                data-width="" 
-                                data-height="" 
-                                data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"
-                            >
-                                <blockquote cite="https://www.facebook.com/TienSinhNhat.vn" class="fb-xfbml-parse-ignore">
-                                    <a href="https://www.facebook.com/TienSinhNhat.vn">
-                                        Tiền Sinh Nhật
-                                    </a>
-                                </blockquote>
-                            </div>
-                        </div>
-                    </b-col>
-                </b-row>
-            </b-container>
-        </div>
     </div>
 </template>
 
@@ -293,7 +248,7 @@ import {auth} from 'google-auth-library';
 
 var dataList = [];
 // URL of your blank Google sheet used to store data
-const spreadSheetID = '1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw';
+var spreadSheetID = '';
 // Google sheets instance
 const sheets = google.sheets('v4');
 // Credentials
@@ -421,6 +376,13 @@ export default {
                     console.log(error);
                 })
             }
+        },
+
+        getSheetId() {
+            // Get sheet ID
+            const sheetId = document.getElementById('sheetId').textContent;
+            // Set spreadSheet ID
+            spreadSheetID = sheetId.replace(/\s+/g, '');
         },
 
         searchMoney() {
@@ -633,6 +595,13 @@ export default {
             this.$nextTick(() => {
                 this.show = true
             });
+        },
+
+        showFooter() {
+            // Get footer
+            const footer = document.getElementById('footer');
+            // Remove style attribute
+            footer.removeAttribute('style');
         }
     },
 
@@ -683,6 +652,10 @@ export default {
         this.setYear();
         // Get data
         this.getData();
+        // Get sheet ID
+        this.getSheetId();
+        // Show footer
+        this.showFooter();
     }
 };
 </script>
@@ -718,7 +691,7 @@ export default {
     font-display: swap;
 }
 
-#app {
+body {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
