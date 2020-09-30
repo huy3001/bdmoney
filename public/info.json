@@ -1,0 +1,35 @@
+{
+    "name": "Tiền sinh nhật",
+    "author": "Mr. Hùng",
+    "version": "1.0.0",
+    "order": {
+        "id": "1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw",
+        "range": "Đơn hàng"
+    },
+    "bank": {
+        "Vietcombank": {
+            "name": "Vietcombank",
+            "logo": "./images/vietcombank.jpg",
+            "account": "Phùng Văn Hùng",
+            "number": "0011003279891"
+        },
+        "Techcombank" : {
+            "name": "Techcombank",
+            "logo": "./images/techcombank.jpg",
+            "account": "Phùng Văn Hùng",
+            "number": "19024297515885"
+        }
+    },
+    "shop": {
+        "name": "www.TienSinhNhat.vn",
+        "slogan": "Tiền Sinh Nhật - Món Quà Nhỏ, Ý Nghĩa Lớn",
+        "website": "http://tiensinhnhat.vn",
+        "seller": "Mr. Hùng",
+        "phone": "0888.000.868",
+        "address": "Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội"
+    },
+    "facebook": {
+        "name": "Tiền Sinh Nhật",
+        "link": "https://www.facebook.com/TienSinhNhat.vn"
+    }
+}
