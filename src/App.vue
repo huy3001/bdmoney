@@ -165,27 +165,22 @@
                                     </b-form-radio>
 
                                     <b-card no-body class="d-flex my-2 money-payment-bank" v-if="payment == 'bank'">
-                                        <b-form-radio class="p-4 pl-0 money-bank" v-model="bank" name="bank-transfer" value="Vietcombank">
-                                            <b-img :class="['border', {'border-success': bank == 'Vietcombank'}, 'money-bank-logo']" width="200" height="200" src="./images/vietcombank.jpg" fluid alt="Vietcombank"></b-img>
+                                        <b-form-radio 
+                                            v-for="(item, index) in info.bank"
+                                            :key="index"
+                                            class="p-4 pl-0 money-bank" 
+                                            v-model="bank" 
+                                            name="bank-transfer" 
+                                            :value="item.name"
+                                        >
+                                            <b-img :class="['border', {'border-success': bank == item.name}, 'money-bank-logo']" width="200" height="200" :src="item.logo" fluid :alt="item.name"></b-img>
 
-                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == 'Vietcombank'">
-                                                Phùng Văn Hùng
+                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == item.name">
+                                                {{ item.account }}
                                                 <br>
-                                                Vietcombank
+                                                {{ item.name }}
                                                 <br>
-                                                0011003279891
-                                            </p>
-                                        </b-form-radio>
-
-                                        <b-form-radio class="p-4 pl-0 money-bank" v-model="bank" name="bank-transfer" value="Techcombank">
-                                            <b-img :class="['border', {'border-success': bank == 'Techcombank'}, 'money-bank-logo']" width="200" height="200" src="./images/techcombank.jpg" fluid alt="Techcombank"></b-img>
-
-                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == 'Techcombank'">
-                                                Phùng Văn Hùng
-                                                <br>
-                                                Techcombank
-                                                <br>
-                                                19024297515885
+                                                {{ item.number }}
                                             </p>
                                         </b-form-radio>
                                     </b-card>
@@ -239,25 +234,25 @@
             </b-container>
         </div>
 
-        <div class="bg-dark text-white py-4 money-footer">
+        <div class="bg-dark text-white py-4 money-footer" v-if="info">
             <b-container>
                 <b-row>
                     <b-col cols="12" sm="12" md="6">
                         <b-card no-body class="bg-dark border-0 text-white money-store">
                             <p class="font-italic font-weight-bold text-warning money-slogan">
-                                Tiền Sinh Nhật - Món Quà Nhỏ, Ý Nghĩa Lớn
+                                {{ info.shop.slogan }}
                             </p>
                             <p>
                                 <b-icon icon="globe2" class="mr-2"></b-icon>
-                                <b-link class="text-white money-website" href="http://tiensinhnhat.vn">www.TienSinhNhat.vn</b-link>
+                                <b-link class="text-white money-website" :href="info.shop.website">{{ info.shop.name }}</b-link>
                             </p>
                             <p>
                                 <b-icon icon="telephone" class="mr-2"></b-icon>
-                                <span>Mr. Hùng - <b-link class="text-white money-contact" href="tel:0888000868">0888.000.868</b-link></span>
+                                <span>{{ info.shop.seller }} - <b-link class="text-white money-contact" :href="'tel:' + info.shop.phone | phoneFormat">{{ info.shop.phone }}</b-link></span>
                             </p>
                             <p>
                                 <b-icon icon="geo-alt" class="mr-2"></b-icon>
-                                <span>Số 9, ngõ 203/37 Kim Ngưu, Hai Bà Trưng, Hà Nội</span>
+                                <span>{{ info.shop.address }}</span>
                             </p>
                         </b-card>
                     </b-col>
@@ -266,15 +261,15 @@
                         <div class="money-facebook">
                             <div 
                                 class="fb-page" 
-                                data-href="https://www.facebook.com/TienSinhNhat.vn" 
+                                :data-href="info.facebook.link" 
                                 data-tabs="" 
                                 data-width="" 
                                 data-height="" 
                                 data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"
                             >
-                                <blockquote cite="https://www.facebook.com/TienSinhNhat.vn" class="fb-xfbml-parse-ignore">
-                                    <a href="https://www.facebook.com/TienSinhNhat.vn">
-                                        Tiền Sinh Nhật
+                                <blockquote :cite="info.facebook.link" class="fb-xfbml-parse-ignore">
+                                    <a :href="info.facebook.link">
+                                        {{ info.facebook.name }}
                                     </a>
                                 </blockquote>
                             </div>
@@ -292,8 +287,8 @@ import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
 
 var dataList = [];
-// URL of your blank Google sheet used to store data
-const spreadSheetID = '1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw';
+// URL of info file
+const infoUrl = window.location.href + 'info.json';
 // Google sheets instance
 const sheets = google.sheets('v4');
 // Credentials
@@ -337,13 +332,13 @@ export default {
             day: null,
             month: null,
             year: null,
+            info: null,
             selected: [],
             payment: '',
             bank: '',
             name: '',
             phone: '',
             address: '',
-            // note: '',
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
@@ -366,6 +361,10 @@ export default {
     filters: {
         currencyFormat(value) {
             return value + 'k'
+        },
+
+        phoneFormat(value) {
+            return value.replace(/\.+/g, '')
         }
     },
 
@@ -415,6 +414,22 @@ export default {
                 .then(function(response) {
                     // handle success
                     parseData(response.data.feed.entry);
+                })
+                .catch(function(error) {
+                    // handle error
+                    console.log(error);
+                })
+            }
+        },
+        
+        getInfo() {
+            // Fetch info from json file
+            let self = this;
+            if (infoUrl != '') {
+                axios.get(infoUrl)
+                .then(function(response) {
+                    // handle success
+                    self.info = response.data;
                 })
                 .catch(function(error) {
                     // handle error
@@ -532,16 +547,19 @@ export default {
                 this.infoMissing = true;
             }
 
+            // Get order info
+            let orderInfo = this.info.order;
+
             // Handle client request
             async function clientRequest() {
                 const authClient = await clientAuthorize();
                 const request = {
                     // The ID of the spreadsheet to update.
-                    spreadsheetId: spreadSheetID, // TODO: Update placeholder value.
+                    spreadsheetId: orderInfo.id, // TODO: Update placeholder value.
 
                     // The A1 notation of a range to search for a logical table of data.
                     // Values are appended after the last row of the table.
-                    range: 'Đơn hàng', // TODO: Update placeholder value.
+                    range: orderInfo.range, // TODO: Update placeholder value.
 
                     // How the input data should be interpreted.
                     valueInputOption: 'RAW', // TODO: Update placeholder value.
@@ -633,6 +651,20 @@ export default {
             this.$nextTick(() => {
                 this.show = true
             });
+        },
+
+        loadFacebookScript() {
+            this.$loadScript("https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v8.0")
+            .then(() => {
+                // Script is loaded, do something
+                this.$nextTick(() => {
+                    window.FB.XFBML.parse();
+                });
+            })
+            .catch(() => {
+                // Failed to fetch script
+                console.log('Script loading error');
+            });
         }
     },
 
@@ -683,6 +715,10 @@ export default {
         this.setYear();
         // Get data
         this.getData();
+        // Get info
+        this.getInfo();
+        // Load facebook script
+        this.loadFacebookScript();
     }
 };
 </script>
@@ -719,11 +755,12 @@ export default {
 }
 
 #app {
+    color: #000000;
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
     text-align: center;
-    color: #000000;
 }
 
 .list-group-item {
