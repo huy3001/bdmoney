@@ -1,0 +1,44 @@
+{
+    "name": "Danh sách sản phẩm Up Sell",
+    "author": "Mr. Hùng",
+    "version": "1.0.0",
+    "title": "Có thể bạn quan tâm",
+    "products": {
+        "product1": {
+            "name": "Xu Phật Nepal",
+            "image": "./images/upsell/product1.png",
+            "price": "100.000",
+            "link": "http://www.shoptienxua.com/xu-phat-nepal-id1318.html"
+        },
+        "product2": {
+            "name": "Tiền con chuột 50 Macao 2020",
+            "image": "./images/upsell/product2.png",
+            "price": "30.000",
+            "link": "http://www.shoptienxua.com/tien-con-chuot-50-macao-2020-id1315.html"
+        },
+        "product3": {
+            "name": "Tiền con chuột 100 Macao 2020",
+            "image": "./images/upsell/product3.png",
+            "price": "30.000",
+            "link": "http://www.shoptienxua.com/tien-con-chuot-100-macao-2020-id1311.html"
+        },
+        "product4": {
+            "name": "Tiền Con Chuột Trung Quốc 2020",
+            "image": "./images/upsell/product4.png",
+            "price": "30.000",
+            "link": "http://www.shoptienxua.com/tien-con-chuot-trung-quoc-2020-id1312.html"
+        },
+        "product5": {
+            "name": "1 triệu $ kỉ niệm con Chuột Mỹ",
+            "image": "./images/upsell/product5.png",
+            "price": "40.000",
+            "link": "http://www.shoptienxua.com/1-trieu-ki-niem-con-chuot-my-id1309.html"
+        },
+        "product6": {
+            "name": "Tiền con chuột polyme Sao Tome 5 Dobra",
+            "image": "./images/upsell/product6.png",
+            "price": "100.000",
+            "link": "http://www.shoptienxua.com/tien-con-chuot-polyme-sao-tome-5-dobra-id1308.html"
+        }
+    }
+}

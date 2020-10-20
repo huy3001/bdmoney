@@ -13,7 +13,8 @@
                         <b-alert show variant="success" v-if="successMessage">
                             Cảm ơn bạn đã đặt hàng, chúng tôi sẽ liên hệ và gửi hàng đến bạn sớm nhất có thể 
                         </b-alert>
-                        <b-button class="mb-4" type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
+                        <b-button class="mb-5" type="button" variant="info" @click="backToForm" v-if="successMessage">Tiếp tục chọn tiền</b-button>
+                        <UpSell :show="successMessage"/>
                     </b-col>
                 </b-row>
 
@@ -282,6 +283,7 @@
 </template>
 
 <script>
+import UpSell from './components/UpSell';
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
@@ -326,6 +328,10 @@ function parseData(entries) {
 
 export default {
     name: "App",
+    components: {
+        UpSell
+    },
+
     data() {
         return {
             show: true,
