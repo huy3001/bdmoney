@@ -613,6 +613,11 @@ export default {
                 return authClient;
             }
 
+            // Handle back to top of page
+            function backToTop() {
+                window.scrollTo(0, 0);
+            }
+
             // Check data is not empty and post
             if (this.selected.length > 0 && this.payment != '' && this.bank != '' && this.name != '' && this.phone != '' && this.address != '') {
                 this.dataMissing = false;
@@ -622,6 +627,8 @@ export default {
                 this.show = false;
                 // Send request to Google sheets
                 clientRequest();
+                // Back to top
+                backToTop();
             }
             else {
                 // Missing info
