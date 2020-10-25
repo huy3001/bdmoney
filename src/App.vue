@@ -408,7 +408,7 @@ export default {
             let year, 
                 startYear = 1951, 
                 endYear = (new Date()).getFullYear();
-            for (year = startYear; year <= endYear; year++) {
+            for (year = endYear; year >= startYear; year--) {
                 this.years.push(year);
             }
         },
@@ -426,6 +426,24 @@ export default {
                     console.log(error);
                 })
             }
+        },
+
+        getMultipleData(firstDataAPI, secondDataAPI) {
+            // Fetch multiple data from Google sheet file
+            let firstData, secondData, mergedData;
+            const getFirstData = axios.get(firstDataAPI);
+            const getSecondData = axios.get(secondDataAPI);
+            Promise.all([getFirstData, getSecondData])
+            .then(function(results) {
+                firstData = results[0].data.feed.entry;
+                secondData = results[1].data.feed.entry;
+                mergedData = firstData.concat(secondData);
+                parseData(mergedData);
+            })
+            .catch(function(error) {
+                // handle error
+                console.log(error);
+            });
         },
         
         getInfo() {
@@ -452,13 +470,14 @@ export default {
             else {
                 let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
                     selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
+                    selectedDate = selectedDay + selectedMonth,
                     selectedYear = this.year;
 
                 // Hide alert
                 this.alert = false;
 
                 // Find birthday in data
-                let itemDay, itemMonth, itemYear, result, resultList = [];
+                let itemDay, itemMonth, itemDate, itemYear, result, resultList = [];
 
                 this.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
@@ -469,8 +488,9 @@ export default {
                     }
 
                     itemMonth = item.month;
+                    itemDate = itemDay + itemMonth;
 
-                    if (itemDay == selectedDay && itemMonth == selectedMonth) {
+                    if (itemDate == selectedDate) {
                         item.year.forEach((value) => {
                             itemYear = parseInt(value);
                             if (itemYear == selectedYear) {
@@ -613,11 +633,6 @@ export default {
                 return authClient;
             }
 
-            // Handle back to top of page
-            function backToTop() {
-                window.scrollTo(0, 0);
-            }
-
             // Check data is not empty and post
             if (this.selected.length > 0 && this.payment != '' && this.bank != '' && this.name != '' && this.phone != '' && this.address != '') {
                 this.dataMissing = false;
@@ -628,7 +643,7 @@ export default {
                 // Send request to Google sheets
                 clientRequest();
                 // Back to top
-                backToTop();
+                this.backToTop();
             }
             else {
                 // Missing info
@@ -664,6 +679,8 @@ export default {
             this.$nextTick(() => {
                 this.show = true
             });
+            // Back to top
+            this.backToTop();
         },
 
         loadFacebookScript() {
@@ -678,6 +695,11 @@ export default {
                 // Failed to fetch script
                 console.log('Script loading error');
             });
+        },
+
+        backToTop() {
+            // Handle back to top of page
+            window.scrollTo(0, 0);
         }
     },
 
@@ -686,11 +708,26 @@ export default {
             // Watch month change and get data base on selected month
             if (this.month != null) {
                 // Set data tab equal selected month
-                this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
-                // Update data API
-                this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
-                // Get data
-                this.getData();
+                if (this.month == 11 || this.month == 12) {
+                    let fisrtDataTab, secondDataTab, fisrtDataAPI, secondDataAPI;
+                    // Update data tabs
+                    fisrtDataTab = this.month - 10;
+                    secondDataTab = this.month;
+                    // Update data APIs
+                    fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + fisrtDataTab + '/public/values?alt=json';
+                    secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + secondDataTab + '/public/values?alt=json';
+                    // Get multiple data
+                    this.getMultipleData(fisrtDataAPI, secondDataAPI);
+                }
+                else {
+                    // Update data tab
+                    this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
+                    // Update data API
+                    this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
+                    // Get data
+                    this.getData();
+                }
+                
             }
         },
 
