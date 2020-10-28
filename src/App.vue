@@ -3,7 +3,7 @@
         <div class="py-4 money-page">
             <b-container>
                 <!-- Title-->
-                <h1 class="mb-4 money-title">
+                <h1 class="mb-4 money-title" v-if="show">
                     Nhập sinh nhật của bạn hoặc người thương
                 </h1>
 
