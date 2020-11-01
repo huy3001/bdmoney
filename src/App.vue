@@ -99,15 +99,19 @@
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
 
-                                <b-form-checkbox
-                                    class="mt-2"
-                                    v-model="selected"
-                                    :id="'money-checkbox-' + index"
-                                    :name="'money-checkbox-' + index"
-                                    :value="result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year"
-                                >
-                                    Chọn mua
-                                </b-form-checkbox>
+                                <div class="d-flex justify-content-between money-info">
+                                    <span class="mt-2 money-price">Giá bán: <b>{{ result.price | currencyFormat }}</b></span>
+
+                                    <b-form-checkbox
+                                        class="mt-2"
+                                        v-model="selected"
+                                        :id="'money-checkbox-' + index"
+                                        :name="'money-checkbox-' + index"
+                                        :value="{ 'money': result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year, 'price': result.price }"
+                                    >
+                                        Chọn mua
+                                    </b-form-checkbox>
+                                </div>
                             </b-form-group>
                         </b-col>
                     </b-row>
@@ -135,12 +139,8 @@
                                         v-for="(item, index) in selected" 
                                         :key="index"
                                     >
-                                        {{ item }}
+                                        {{ item.money }}
                                     </span>    
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    Giá tiền: {{ price | currencyFormat }} / tờ
                                 </b-list-group-item>
 
                                 <b-list-group-item>
@@ -376,10 +376,13 @@ export default {
 
     computed: {
         total() {
-            let total = 0;
+            let total = 0, selectedPrice = 0;
             // Calculate total price
             if (this.selected.length > 0) {
-                total = this.price * this.selected.length + this.ship
+                this.selected.forEach((value) => {
+                    selectedPrice = selectedPrice + value.price;
+                });
+                total = selectedPrice + this.ship
             }
             return total;
         }
@@ -477,7 +480,7 @@ export default {
                 this.alert = false;
 
                 // Find birthday in data
-                let itemDay, itemMonth, itemDate, itemYear, result, resultList = [];
+                let itemDay, itemMonth, itemDate, itemYear, itemPrice, result, resultList = [];
 
                 this.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
@@ -494,11 +497,31 @@ export default {
                         item.year.forEach((value) => {
                             itemYear = parseInt(value);
                             if (itemYear == selectedYear) {
+                                // Set price for each money
+                                switch(item.money) {
+                                    case '0.5':
+                                        itemPrice = this.info.price.fivehundred;
+                                        break;
+                                    case '1':
+                                        itemPrice = this.info.price.onethousand;
+                                        break;
+                                    case '2':
+                                        itemPrice = this.info.price.twothousand;
+                                        break;
+                                    case '5':
+                                        itemPrice = this.info.price.fivethousand;
+                                        break;
+                                    default:
+                                        itemPrice = this.price;
+                                }
+
+                                // Create result object
                                 result = {
                                     'day': item.day,
                                     'month': item.month,
                                     'year': selectedYear,
                                     'money': item.money,
+                                    'price': itemPrice,
                                     'seri': item.seri
                                 }
 
@@ -538,7 +561,7 @@ export default {
             let selectedMoney = '';
             if (this.selected.length > 0) {
                 this.selected.forEach((value) => {
-                    selectedMoney = selectedMoney + value + ' - ';
+                    selectedMoney = selectedMoney + value.money + ' - ';
                 });
             }
 
