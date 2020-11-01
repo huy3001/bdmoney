@@ -31,5 +31,11 @@
     "facebook": {
         "name": "Tiền Sinh Nhật",
         "link": "https://www.facebook.com/TienSinhNhat.vn"
+    },
+    "price": {
+        "fivehundred": 119,
+        "onethousand": 99,
+        "twothousand": 109,
+        "fivethousand": 119
     }
 }
