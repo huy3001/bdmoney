@@ -85,9 +85,13 @@
 
                             <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
                                 <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                                <b-img class="money-image" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
                                 <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                <b-img class="money-image" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
                                 <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img class="money-image" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
                                 <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
 
                                 <span class="money-serial">
                                     <span class="money-serial-text">{{ result.seri }}</span>
@@ -103,7 +107,7 @@
                                     <span class="mt-2 money-price">Giá bán: <b>{{ result.price | currencyFormat }}</b></span>
 
                                     <b-form-checkbox
-                                        class="mt-2"
+                                        class="mt-2 money-checkbox"
                                         v-model="selected"
                                         :id="'money-checkbox-' + index"
                                         :name="'money-checkbox-' + index"
@@ -131,7 +135,7 @@
                         </b-col>
 
                         <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-list-group class="text-left mb-3">
+                            <b-list-group class="text-left mb-3 money-order">
                                 <b-list-group-item>
                                     <span class="mr-1">Bạn đã chọn:</span>
                                     <span 
@@ -544,6 +548,9 @@ export default {
                 
                 // Assign result list to results
                 this.results = [...resultList];
+
+                // Add fly effect when select money
+                this.moneyFlyEffect();
             }
         },
 
@@ -723,6 +730,44 @@ export default {
         backToTop() {
             // Handle back to top of page
             window.scrollTo(0, 0);
+        },
+
+        moneyFlyEffect() {
+            let timeoutFunction = null;
+            clearTimeout(timeoutFunction);
+            timeoutFunction = setTimeout(() => {
+                const   root = document.documentElement,
+                        moneyOrder = document.querySelector('.money-order');
+                let moneyOrderRect = moneyOrder.getBoundingClientRect(),
+                    moneyCheckbox = document.querySelectorAll('.money-checkbox');
+                let checkedItem, checkedImage, 
+                    moneyOrderLeft, moneyOrderTop, 
+                    checkedImageRect, checkedImageLeft, checkedImageTop;
+                moneyCheckbox.forEach((checkboxItem) => {
+                    checkboxItem.addEventListener('click', (event) => {
+                        checkedItem = event.target.closest('.money-form-group');
+                        checkedImage = checkedItem.querySelector('.money-image');
+                        if (event.target.checked) {
+                            // Get order position
+                            moneyOrderLeft = Math.round(moneyOrderRect.x);
+                            moneyOrderTop = Math.round(moneyOrderRect.y);
+                            // Get checked image position
+                            checkedImageRect = checkedImage.getBoundingClientRect();
+                            checkedImageLeft = Math.round(checkedImageRect.x);
+                            checkedImageTop = Math.round(checkedImageRect.y);
+                            // Set order position to document styles
+                            root.style.setProperty('--order-left', moneyOrderLeft - checkedImageLeft + 'px');
+                            root.style.setProperty('--order-top', moneyOrderTop - checkedImageTop + 'px');
+                            // Add flying class for money image
+                            checkedImage.classList.add('money-image-flying');
+                            // Remove flying class after 1s
+                            setTimeout(() => {
+                                checkedImage.classList.remove('money-image-flying');
+                            }, 1000)
+                        }
+                    })
+                })
+            }, 200);
         }
     },
 
@@ -867,12 +912,30 @@ export default {
         }
     }
 
+    &-image {
+        left: 0;
+        position: absolute;
+        top: 0;
+        transition: left 1s ease-in-out, opacity 1s ease-in-out, top 1s ease-in-out, transform 1s ease-in-out;
+        visibility: hidden;
+        z-index: 9;
+
+        &-flying {
+            left: var(--order-left);
+            opacity: 0;
+            top: var(--order-top);
+            visibility: visible;
+            transform: scale(0);
+        }
+    }
+
     &-serial,
     &-serial-2 {
         color: #C23927;
         font-size: 50%;
         letter-spacing: 2px;
         position: absolute;
+        z-index: 10;
 
         @media (min-width: 400px) {
             font-size: 70%;
