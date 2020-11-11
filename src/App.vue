@@ -763,7 +763,7 @@ export default {
                             // Remove flying class after 1s
                             setTimeout(() => {
                                 checkedImage.classList.remove('money-image-flying');
-                            }, 1000)
+                            }, 1500)
                         }
                     })
                 })
@@ -916,7 +916,7 @@ export default {
         left: 0;
         position: absolute;
         top: 0;
-        transition: left 1s ease-in-out, opacity 1s ease-in-out, top 1s ease-in-out, transform 1s ease-in-out;
+        transition: left 1.5s ease-in-out, opacity 1.5s ease-in-out, top 1.5s ease-in-out, transform 1.5s ease-in-out;
         visibility: hidden;
         z-index: 9;
 
