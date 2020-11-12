@@ -84,14 +84,26 @@
                             </b-alert>
 
                             <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                                <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img class="money-image" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img class="money-image" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                                <b-img class="money-image" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                
                                 <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
                                 <b-img class="money-image" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
 
                                 <span class="money-serial">
                                     <span class="money-serial-text">{{ result.seri }}</span>
@@ -477,7 +489,7 @@ export default {
             else {
                 let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
                     selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
-                    selectedDate = selectedDay + selectedMonth,
+                    selectedDate = selectedDay.toString() + selectedMonth.toString(),
                     selectedYear = this.year;
 
                 // Hide alert
@@ -514,6 +526,15 @@ export default {
                                         break;
                                     case '5':
                                         itemPrice = this.info.price.fivethousand;
+                                        break;
+                                    case '10':
+                                        itemPrice = this.info.price.tenthousand;
+                                        break;
+                                    case '20':
+                                        itemPrice = this.info.price.twentythousand;
+                                        break;
+                                    case '50':
+                                        itemPrice = this.info.price.fiftythousand;
                                         break;
                                     default:
                                         itemPrice = this.price;
@@ -738,7 +759,7 @@ export default {
             timeoutFunction = setTimeout(() => {
                 const   root = document.documentElement,
                         moneyOrder = document.querySelector('.money-order');
-                let moneyOrderRect = moneyOrder.getBoundingClientRect(),
+                let moneyOrderRect = moneyOrder ? moneyOrder.getBoundingClientRect() : null,
                     moneyCheckbox = document.querySelectorAll('.money-checkbox');
                 let checkedItem, checkedImage, 
                     moneyOrderLeft, moneyOrderTop, 
@@ -752,7 +773,7 @@ export default {
                             moneyOrderLeft = Math.round(moneyOrderRect.x);
                             moneyOrderTop = Math.round(moneyOrderRect.y);
                             // Get checked image position
-                            checkedImageRect = checkedImage.getBoundingClientRect();
+                            checkedImageRect = checkedImage ? checkedImage.getBoundingClientRect() : null;
                             checkedImageLeft = Math.round(checkedImageRect.x);
                             checkedImageTop = Math.round(checkedImageRect.y);
                             // Set order position to document styles
@@ -867,6 +888,19 @@ export default {
         url('./fonts/NHLWashington.woff') format('woff'),
         url('./fonts/NHLWashington.ttf') format('truetype'),
         url('./fonts/NHLWashington.svg#NHLWashington') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('./fonts/Roboto-Regular.eot');
+    src: url('./fonts/Roboto-Regular.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/Roboto-Regular.woff2') format('woff2'),
+        url('./fonts/Roboto-Regular.woff') format('woff'),
+        url('./fonts/Roboto-Regular.ttf') format('truetype'),
+        url('./fonts/Roboto-Regular.svg#Roboto-Regular') format('svg');
     font-weight: normal;
     font-style: normal;
     font-display: swap;

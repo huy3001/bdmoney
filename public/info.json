@@ -3,7 +3,7 @@
     "author": "Mr. Hùng",
     "version": "1.0.0",
     "order": {
-        "id": "1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw",
+        "id": "1Eu5v3oQWkFCnEiZcSOdRd7Wchu3OGp9lJlVMvljwOoI",
         "range": "Đơn hàng"
     },
     "bank": {
@@ -36,6 +36,9 @@
         "fivehundred": 119,
         "onethousand": 99,
         "twothousand": 109,
-        "fivethousand": 119
+        "fivethousand": 119,
+        "tenthousand": 179,
+        "twentythousand": 199,
+        "fiftythousand": 239
     }
 }
