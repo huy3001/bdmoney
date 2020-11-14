@@ -105,12 +105,12 @@
                                 <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
                                 <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
 
-                                <span class="money-serial">
+                                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50'}]">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
                                 
-                                <span class="money-serial-2" v-if="result.money == '5'">
+                                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50'">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
@@ -570,6 +570,9 @@ export default {
                 // Assign result list to results
                 this.results = [...resultList];
 
+                // Split money serial
+                this.moneySerialSplit();
+
                 // Add fly effect when select money
                 this.moneyFlyEffect();
             }
@@ -751,6 +754,24 @@ export default {
         backToTop() {
             // Handle back to top of page
             window.scrollTo(0, 0);
+        },
+
+        moneySerialSplit() {
+            let timeoutFunction = null;
+            clearTimeout(timeoutFunction);
+            timeoutFunction = setTimeout(() => {
+                let moneySerialText = document.querySelectorAll('.money-serial-vertical .money-serial-text, .money-serial-horizontal .money-serial-text');
+                moneySerialText.forEach((serialTextItem) => {
+                    // Split money serial text into characters
+                    serialTextItem.innerHTML = serialTextItem.textContent.replace(/\D/g, "<span class='character'>$&</span>");
+                })
+
+                let moneySerialNumber = document.querySelectorAll('.money-serial-vertical .money-serial-number, .money-serial-horizontal .money-serial-number');
+                moneySerialNumber.forEach((serialNumberItem) => {
+                    // Split money serial text into characters
+                    serialNumberItem.innerHTML = serialNumberItem.textContent.replace(/\d/g, "<span class='character number'>$&</span>");
+                })
+            }, 200);
         },
 
         moneyFlyEffect() {
@@ -964,7 +985,7 @@ export default {
     }
 
     &-serial,
-    &-serial-2 {
+    &-serial-second {
         color: #C23927;
         font-size: 50%;
         letter-spacing: 2px;
@@ -995,6 +1016,15 @@ export default {
     &-serial {
         &-text {
             font-family: 'NHL Washington', sans-serif;
+
+            .money-serial-vertical &,
+            .money-serial-horizontal & {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .money-serial-vertical & {
+                display: block;
+            }
         }
 
         &-number {
@@ -1002,8 +1032,31 @@ export default {
             font-weight: 700;
             margin-left: 5px;
 
+            .money-serial-vertical &,
+            .money-serial-horizontal & {
+                font-family: 'Roboto', sans-serif;
+                font-weight: 400;
+            }
+
+            .money-serial-vertical & {
+                display: block;
+                margin-left: 0;
+            }
+
+            .money-serial-horizontal & {
+                @for $i from 1 through 8 {
+                    span:nth-child(#{$i}) {
+                        font-size: calc(#{$i} * 5% + 95%);
+                    }
+                }
+            }
+
             @media (min-width: 1200px) {
                 margin-left: 10px;
+
+                .money-serial-vertical & {
+                    margin-left: 0;
+                }
             }
         }
 
@@ -1057,13 +1110,178 @@ export default {
         }
     }
 
-    &-serial-2 {
+    &-serial-second {
         .money-type-5000 & {
             left: 15%;
             top: 51%;
 
             @media (min-width: 1200px) {
                 top: 53%;
+            }
+        }
+    }
+
+    &-serial-vertical {
+        line-height: 1;
+
+        @media (min-width: 400px) {
+            font-size: 68%;
+        }
+
+        @media (min-width: 576px) {
+            font-size: 80%;
+        }
+        
+        @media (min-width: 768px) {
+            font-size: 50%;
+        }
+
+        @media (min-width: 992px) {
+            font-size: 74%;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 88%;
+        }
+
+        .money-type-10000 & {
+            left: 2%;
+            top: 13%;
+
+            @media (min-width: 400px) {
+                top: 14%;
+            }
+
+            @media (min-width: 576px) {
+                top: 15%;
+            }
+        }
+
+        .money-type-20000 & {
+            left: 4%;
+            top: 16%;
+
+            @media (min-width: 400px) {
+                top: 20%;
+            }
+        }
+
+        .money-type-50000 & {
+            left: 4%;
+            top: 17%;
+
+            @media (min-width: 400px) {
+                top: 19%;
+            }
+
+            @media (min-width: 576px) {
+                top: 20%;
+            }
+        }
+
+        .character {
+            display: block;
+        }
+    }
+
+    &-serial-horizontal {
+        color: #555555;
+        letter-spacing: 1px;
+        line-height: 1;
+
+        @media (min-width: 400px) {
+            letter-spacing: 2px;
+        }
+
+        @media (min-width: 576px) {
+            font-size: 95%;
+        }
+
+        @media (min-width: 768px) {
+            font-size: 55%;
+        }
+
+        @media (min-width: 992px) {
+            font-size: 82%;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 100%;
+        }
+
+        .money-type-10000 & {
+            left: 71%;
+            top: 70%;
+
+            @media (min-width: 400px) {
+                left: 70%;
+                top: 73%;
+            }
+
+            @media (min-width: 576px) {
+                top: 77%;
+            }
+
+            @media (min-width: 768px) {
+                top: 71%;
+            }
+
+            @media (min-width: 992px) {
+                top: 75%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 77%;
+            }
+        }
+
+        .money-type-20000 & {
+            left: 73%;
+            top: 68%;
+
+            @media (min-width: 400px) {
+                top: 73%;
+            }
+
+            @media (min-width: 576px) {
+                top: 75%;
+            }
+
+            @media (min-width: 768px) {
+                top: 71%;
+            }
+
+            @media (min-width: 992px) {
+                top: 73%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 75%;
+            }
+        }
+
+        .money-type-50000 & {
+            left: 72%;
+            top: 70%;
+
+            @media (min-width: 400px) {
+                top: 73%;
+            }
+
+            @media (min-width: 576px) {
+                top: 75%;
+            }
+
+            @media (min-width: 768px) {
+                top: 72%;
+            }
+
+            @media (min-width: 992px) {
+                top: 74%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 76%;
             }
         }
     }
