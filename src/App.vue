@@ -1153,37 +1153,17 @@ export default {
 
         .money-type-10000 & {
             left: 2%;
-            top: 13%;
-
-            @media (min-width: 400px) {
-                top: 14%;
-            }
-
-            @media (min-width: 576px) {
-                top: 15%;
-            }
+            top: 15%;
         }
 
         .money-type-20000 & {
             left: 4%;
-            top: 16%;
-
-            @media (min-width: 400px) {
-                top: 20%;
-            }
+            top: 20%;
         }
 
         .money-type-50000 & {
             left: 4%;
-            top: 17%;
-
-            @media (min-width: 400px) {
-                top: 19%;
-            }
-
-            @media (min-width: 576px) {
-                top: 20%;
-            }
+            top: 20%;
         }
 
         .character {
@@ -1217,8 +1197,8 @@ export default {
         }
 
         .money-type-10000 & {
-            left: 71%;
-            top: 70%;
+            left: 75%;
+            top: 72%;
 
             @media (min-width: 400px) {
                 left: 70%;
@@ -1243,10 +1223,11 @@ export default {
         }
 
         .money-type-20000 & {
-            left: 73%;
-            top: 68%;
+            left: 76%;
+            top: 72%;
 
             @media (min-width: 400px) {
+                left: 73%;
                 top: 73%;
             }
 
@@ -1268,11 +1249,11 @@ export default {
         }
 
         .money-type-50000 & {
-            left: 72%;
-            top: 70%;
+            left: 75%;
+            top: 73%;
 
             @media (min-width: 400px) {
-                top: 73%;
+                left: 72%;
             }
 
             @media (min-width: 576px) {
