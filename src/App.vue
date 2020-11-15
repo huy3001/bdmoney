@@ -105,12 +105,12 @@
                                 <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
                                 <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
 
-                                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50'}]">
+                                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50'}]" :key="serialKey">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
                                 
-                                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50'">
+                                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50'" :key="serialKey + 1">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
@@ -371,6 +371,7 @@ export default {
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             data: dataList,
             results: [],
+            serialKey: 0,
             alert: false,
             empty: false,
             dataMissing: false,
@@ -495,8 +496,14 @@ export default {
                 // Hide alert
                 this.alert = false;
 
+                // Change serial key
+                this.serialKey +=1;
+
                 // Find birthday in data
                 let itemDay, itemMonth, itemDate, itemYear, itemPrice, result, resultList = [];
+
+                // Reset result list
+                resultList.length = 0;
 
                 this.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
