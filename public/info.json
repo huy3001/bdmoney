@@ -36,6 +36,9 @@
         "fivehundred": 119,
         "onethousand": 99,
         "twothousand": 109,
-        "fivethousand": 119
+        "fivethousand": 119,
+        "tenthousand": 179,
+        "twentythousand": 199,
+        "fiftythousand": 239
     }
 }

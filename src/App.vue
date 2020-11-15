@@ -84,21 +84,33 @@
                             </b-alert>
 
                             <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                                <b-img :id="result.money + index" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img class="money-image" width="700" height="350" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img :id="result.money + index" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img class="money-image" width="700" height="338" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img :id="result.money + index" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                                <b-img class="money-image" width="700" height="341" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
+
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
+                                
                                 <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
                                 <b-img class="money-image" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
+                                
+                                <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
+                                <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
 
-                                <span class="money-serial">
+                                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50'}]" :key="serialKey">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
                                 
-                                <span class="money-serial-2" v-if="result.money == '5'">
+                                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50'" :key="serialKey + 1">
                                     <span class="money-serial-text">{{ result.seri }}</span>
                                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                                 </span>
@@ -190,42 +202,37 @@
                                         </b-form-radio>
                                     </b-card>
                                 </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-input
+                                        v-model="name"
+                                        placeholder="Họ và tên"
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-input>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-input
+                                        type="number"
+                                        v-model="phone"
+                                        placeholder="Số điện thoại"
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-input>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-textarea
+                                        v-model="address"
+                                        placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
+                                        rows="3"
+                                        no-resize
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-textarea>
+                                </b-list-group-item>
                             </b-list-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="name">
-                                <b-form-input
-                                    v-model="name"
-                                    placeholder="Họ và tên"
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-input>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="phone">
-                                <b-form-input
-                                    v-model="phone"
-                                    placeholder="Số điện thoại"
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-input>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="address">
-                                <b-form-textarea
-                                    v-model="address"
-                                    placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
-                                    rows="3"
-                                    no-resize
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-textarea>
-                            </b-form-group>
                         </b-col>
 
                         <b-col cols="12" v-if="infoMessage">
@@ -359,6 +366,7 @@ export default {
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             data: dataList,
             results: [],
+            serialKey: 0,
             alert: false,
             empty: false,
             dataMissing: false,
@@ -477,14 +485,20 @@ export default {
             else {
                 let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
                     selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
-                    selectedDate = selectedDay + selectedMonth,
+                    selectedDate = selectedDay.toString() + selectedMonth.toString(),
                     selectedYear = this.year;
 
                 // Hide alert
                 this.alert = false;
 
+                // Change serial key
+                this.serialKey +=1;
+
                 // Find birthday in data
                 let itemDay, itemMonth, itemDate, itemYear, itemPrice, result, resultList = [];
+
+                // Reset result list
+                resultList.length = 0;
 
                 this.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
@@ -514,6 +528,15 @@ export default {
                                         break;
                                     case '5':
                                         itemPrice = this.info.price.fivethousand;
+                                        break;
+                                    case '10':
+                                        itemPrice = this.info.price.tenthousand;
+                                        break;
+                                    case '20':
+                                        itemPrice = this.info.price.twentythousand;
+                                        break;
+                                    case '50':
+                                        itemPrice = this.info.price.fiftythousand;
                                         break;
                                     default:
                                         itemPrice = this.price;
@@ -548,6 +571,9 @@ export default {
                 
                 // Assign result list to results
                 this.results = [...resultList];
+
+                // Split money serial
+                this.moneySerialSplit();
 
                 // Add fly effect when select money
                 this.moneyFlyEffect();
@@ -732,13 +758,31 @@ export default {
             window.scrollTo(0, 0);
         },
 
+        moneySerialSplit() {
+            let timeoutFunction = null;
+            clearTimeout(timeoutFunction);
+            timeoutFunction = setTimeout(() => {
+                let moneySerialText = document.querySelectorAll('.money-serial-vertical .money-serial-text, .money-serial-horizontal .money-serial-text');
+                moneySerialText.forEach((serialTextItem) => {
+                    // Split money serial text into characters
+                    serialTextItem.innerHTML = serialTextItem.textContent.replace(/\D/g, "<span class='character'>$&</span>");
+                })
+
+                let moneySerialNumber = document.querySelectorAll('.money-serial-vertical .money-serial-number, .money-serial-horizontal .money-serial-number');
+                moneySerialNumber.forEach((serialNumberItem) => {
+                    // Split money serial text into characters
+                    serialNumberItem.innerHTML = serialNumberItem.textContent.replace(/\d/g, "<span class='character number'>$&</span>");
+                })
+            }, 200);
+        },
+
         moneyFlyEffect() {
             let timeoutFunction = null;
             clearTimeout(timeoutFunction);
             timeoutFunction = setTimeout(() => {
                 const   root = document.documentElement,
                         moneyOrder = document.querySelector('.money-order');
-                let moneyOrderRect = moneyOrder.getBoundingClientRect(),
+                let moneyOrderRect = moneyOrder ? moneyOrder.getBoundingClientRect() : null,
                     moneyCheckbox = document.querySelectorAll('.money-checkbox');
                 let checkedItem, checkedImage, 
                     moneyOrderLeft, moneyOrderTop, 
@@ -752,7 +796,7 @@ export default {
                             moneyOrderLeft = Math.round(moneyOrderRect.x);
                             moneyOrderTop = Math.round(moneyOrderRect.y);
                             // Get checked image position
-                            checkedImageRect = checkedImage.getBoundingClientRect();
+                            checkedImageRect = checkedImage ? checkedImage.getBoundingClientRect() : null;
                             checkedImageLeft = Math.round(checkedImageRect.x);
                             checkedImageTop = Math.round(checkedImageRect.y);
                             // Set order position to document styles
@@ -872,6 +916,19 @@ export default {
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Roboto';
+    src: url('./fonts/Roboto-Regular.eot');
+    src: url('./fonts/Roboto-Regular.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/Roboto-Regular.woff2') format('woff2'),
+        url('./fonts/Roboto-Regular.woff') format('woff'),
+        url('./fonts/Roboto-Regular.ttf') format('truetype'),
+        url('./fonts/Roboto-Regular.svg#Roboto-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 #app {
     color: #000000;
     font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -930,7 +987,7 @@ export default {
     }
 
     &-serial,
-    &-serial-2 {
+    &-serial-second {
         color: #C23927;
         font-size: 50%;
         letter-spacing: 2px;
@@ -961,6 +1018,15 @@ export default {
     &-serial {
         &-text {
             font-family: 'NHL Washington', sans-serif;
+
+            .money-serial-vertical &,
+            .money-serial-horizontal & {
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .money-serial-vertical & {
+                display: block;
+            }
         }
 
         &-number {
@@ -968,8 +1034,31 @@ export default {
             font-weight: 700;
             margin-left: 5px;
 
+            .money-serial-vertical &,
+            .money-serial-horizontal & {
+                font-family: 'Roboto', sans-serif;
+                font-weight: 400;
+            }
+
+            .money-serial-vertical & {
+                display: block;
+                margin-left: 0;
+            }
+
+            .money-serial-horizontal & {
+                @for $i from 1 through 8 {
+                    span:nth-child(#{$i}) {
+                        font-size: calc(#{$i} * 5% + 95%);
+                    }
+                }
+            }
+
             @media (min-width: 1200px) {
                 margin-left: 10px;
+
+                .money-serial-vertical & {
+                    margin-left: 0;
+                }
             }
         }
 
@@ -1023,13 +1112,159 @@ export default {
         }
     }
 
-    &-serial-2 {
+    &-serial-second {
         .money-type-5000 & {
             left: 15%;
             top: 51%;
 
             @media (min-width: 1200px) {
                 top: 53%;
+            }
+        }
+    }
+
+    &-serial-vertical {
+        line-height: 1;
+
+        @media (min-width: 400px) {
+            font-size: 68%;
+        }
+
+        @media (min-width: 576px) {
+            font-size: 80%;
+        }
+        
+        @media (min-width: 768px) {
+            font-size: 50%;
+        }
+
+        @media (min-width: 992px) {
+            font-size: 74%;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 88%;
+        }
+
+        .money-type-10000 & {
+            left: 2%;
+            top: 15%;
+        }
+
+        .money-type-20000 & {
+            left: 4%;
+            top: 20%;
+        }
+
+        .money-type-50000 & {
+            left: 4%;
+            top: 20%;
+        }
+
+        .character {
+            display: block;
+        }
+    }
+
+    &-serial-horizontal {
+        color: #555555;
+        letter-spacing: 1px;
+        line-height: 1;
+
+        @media (min-width: 400px) {
+            letter-spacing: 2px;
+        }
+
+        @media (min-width: 576px) {
+            font-size: 95%;
+        }
+
+        @media (min-width: 768px) {
+            font-size: 55%;
+        }
+
+        @media (min-width: 992px) {
+            font-size: 82%;
+        }
+
+        @media (min-width: 1200px) {
+            font-size: 100%;
+        }
+
+        .money-type-10000 & {
+            left: 75%;
+            top: 72%;
+
+            @media (min-width: 400px) {
+                left: 70%;
+                top: 73%;
+            }
+
+            @media (min-width: 576px) {
+                top: 77%;
+            }
+
+            @media (min-width: 768px) {
+                top: 71%;
+            }
+
+            @media (min-width: 992px) {
+                top: 75%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 77%;
+            }
+        }
+
+        .money-type-20000 & {
+            left: 76%;
+            top: 72%;
+
+            @media (min-width: 400px) {
+                left: 73%;
+                top: 73%;
+            }
+
+            @media (min-width: 576px) {
+                top: 75%;
+            }
+
+            @media (min-width: 768px) {
+                top: 71%;
+            }
+
+            @media (min-width: 992px) {
+                top: 73%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 75%;
+            }
+        }
+
+        .money-type-50000 & {
+            left: 75%;
+            top: 73%;
+
+            @media (min-width: 400px) {
+                left: 72%;
+            }
+
+            @media (min-width: 576px) {
+                top: 75%;
+            }
+
+            @media (min-width: 768px) {
+                top: 72%;
+            }
+
+            @media (min-width: 992px) {
+                top: 74%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 76%;
             }
         }
     }
@@ -1088,6 +1323,24 @@ export default {
             &::after {
                 left: .5rem;
                 top: .5rem;
+            }
+        }
+    }
+
+    &-order {
+        .form-control {
+            border: none;
+            height: 1.5rem;
+            padding: 0;
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+        textarea {
+            &.form-control {
+                height: auto;
             }
         }
     }
