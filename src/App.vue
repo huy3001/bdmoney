@@ -202,42 +202,37 @@
                                         </b-form-radio>
                                     </b-card>
                                 </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-input
+                                        v-model="name"
+                                        placeholder="Họ và tên"
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-input>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-input
+                                        type="number"
+                                        v-model="phone"
+                                        placeholder="Số điện thoại"
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-input>
+                                </b-list-group-item>
+
+                                <b-list-group-item>
+                                    <b-form-textarea
+                                        v-model="address"
+                                        placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
+                                        rows="3"
+                                        no-resize
+                                        required
+                                        :state="infoMissing ? false : null"
+                                    ></b-form-textarea>
+                                </b-list-group-item>
                             </b-list-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="name">
-                                <b-form-input
-                                    v-model="name"
-                                    placeholder="Họ và tên"
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-input>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="phone">
-                                <b-form-input
-                                    v-model="phone"
-                                    placeholder="Số điện thoại"
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-input>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-form-group id="address">
-                                <b-form-textarea
-                                    v-model="address"
-                                    placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
-                                    rows="3"
-                                    no-resize
-                                    required
-                                    :state="infoMissing ? false : null"
-                                ></b-form-textarea>
-                            </b-form-group>
                         </b-col>
 
                         <b-col cols="12" v-if="infoMessage">
@@ -1328,6 +1323,24 @@ export default {
             &::after {
                 left: .5rem;
                 top: .5rem;
+            }
+        }
+    }
+
+    &-order {
+        .form-control {
+            border: none;
+            height: 1.5rem;
+            padding: 0;
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+        textarea {
+            &.form-control {
+                height: auto;
             }
         }
     }
