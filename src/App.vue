@@ -170,13 +170,13 @@
                                 </b-list-group-item>
 
                                 <b-list-group-item>
-                                    <span>Hình thức thanh toán:</span>
+                                    <!-- <span>Hình thức thanh toán:</span> -->
 
-                                    <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash">
+                                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash"> -->
                                         <span class="money-payment-text">Thanh toán khi nhận hàng</span>
-                                    </b-form-radio>
+                                    <!-- </b-form-radio> -->
 
-                                    <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
+                                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
                                         <span class="money-payment-text">Chuyển khoản trước (Miễn phí ship)</span>
                                         <p class="my-2 text-secondary money-payment-note" v-if="payment == 'bank'">Nội dung chuyển khoản: Tên + SDT đặt hàng</p>
                                     </b-form-radio>
@@ -200,7 +200,7 @@
                                                 {{ item.number }}
                                             </p>
                                         </b-form-radio>
-                                    </b-card>
+                                    </b-card> -->
                                 </b-list-group-item>
 
                                 <b-list-group-item>
@@ -351,8 +351,8 @@ export default {
             year: null,
             info: null,
             selected: [],
-            payment: '',
-            bank: '',
+            payment: 'cash',
+            bank: 'bank',
             name: '',
             phone: '',
             address: '',
@@ -616,7 +616,7 @@ export default {
                 this.phone,
                 this.address,
                 selectedMoney,
-                this.total + 'k',
+                this.total + '000',
                 paymentMethod
             ]
             
@@ -718,7 +718,7 @@ export default {
             this.month = null;
             this.year = null;
             this.selected = [];
-            this.payment = '';
+            // this.payment = '';
             this.bank = '';
             this.name = '';
             this.phone = '';
@@ -1330,8 +1330,16 @@ export default {
     &-order {
         .form-control {
             border: none;
+            color: #000000;
             height: 1.5rem;
             padding: 0;
+
+            &::-webkit-input-placeholder,
+            &:-moz-placeholder,
+            &::-moz-placeholder,
+            &:-ms-input-placeholder {
+                color: #000000;
+            }
 
             &:focus {
                 box-shadow: none;
