@@ -560,14 +560,18 @@ export default {
                 })
 
                 // Show or hide message when result is empty or not
-                if (resultList.length == 0) {
-                    this.empty = true;
-                    this.infoMessage = false;
-                }
-                else {
-                    this.empty = false;
-                    this.infoMessage = true;
-                }
+                let timeoutFunction = null;
+                clearTimeout(timeoutFunction);
+                timeoutFunction = setTimeout(() => {
+                    if (resultList.length == 0) {
+                        this.empty = true;
+                        this.infoMessage = false;
+                    }
+                    else {
+                        this.empty = false;
+                        this.infoMessage = true;
+                    }
+                }, 200);
                 
                 // Assign result list to results
                 this.results = [...resultList];
