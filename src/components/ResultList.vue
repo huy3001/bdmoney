@@ -57,6 +57,37 @@
 
 <script>
 export default {
-    name: "ResultList"
+    name: "ResultList",
+    props: {
+        results: Array,
+        serialKey: Number
+    },
+
+    data() {
+        return {
+            selected: [],
+            ship: null
+        }
+    },
+
+    filters: {
+        currencyFormat(value) {
+            return value + 'k'
+        }
+    },
+
+    watch: {
+        selected() {
+            // Watch selected change and update ship fee
+            if (this.selected.length > 1) {
+                this.ship = 0
+            }
+            else {
+                this.ship = 30
+            }
+            // Handle selected money and ship fee
+            this.$emit('select', this.selected, this.ship);
+        }
+    }
 }
 </script>
