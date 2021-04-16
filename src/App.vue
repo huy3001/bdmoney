@@ -18,49 +18,16 @@
                     </b-col>
                 </b-row>
 
-                <!-- Choose birthday form -->
                 <b-form id="birthday" @reset="onReset" v-if="show">
-                    <b-row>
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="day-selection">
-                                <b-form-select
-                                    id="day"
-                                    v-model="day"
-                                    :options="days"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
+                    <!-- Choose birthday form -->
+                    <BirthdayForm 
+                        :data="getData"
+                        :data-id="dataID"
+                        :multiple-data="getMultipleData"
+                        @search="searchMoney"
+                    />
 
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="month-selection">
-                                <b-form-select
-                                    id="month"
-                                    v-model="month"
-                                    :options="months"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="year-selection">
-                                <b-form-select
-                                    id="month"
-                                    v-model="year"
-                                    :options="years"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="12" lg="3">
-                            <b-form-group id="search">
-                                <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-
+                    <!-- Messages -->
                     <b-row>
                         <b-col cols="12">
                             <b-alert show variant="danger" v-if="alert">
@@ -77,6 +44,7 @@
                         </b-col>
                     </b-row>
 
+                    <!-- Result list -->
                     <b-row>
                         <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
                             <b-alert show variant="success">
@@ -132,6 +100,7 @@
                         </b-col>
                     </b-row>
 
+                    <!-- Order info -->
                     <b-row>
                         <b-col cols="12">
                             <b-alert show variant="info" v-if="infoMessage">
@@ -246,55 +215,15 @@
             </b-container>
         </div>
 
-        <div class="bg-dark text-white py-4 money-footer" v-if="info">
-            <b-container>
-                <b-row>
-                    <b-col cols="12" sm="12" md="6">
-                        <b-card no-body class="bg-dark border-0 text-white money-store">
-                            <p class="font-italic font-weight-bold text-warning money-slogan">
-                                {{ info.shop.slogan }}
-                            </p>
-                            <p>
-                                <b-icon icon="globe2" class="mr-2"></b-icon>
-                                <b-link class="text-white money-website" :href="info.shop.website">{{ info.shop.name }}</b-link>
-                            </p>
-                            <p>
-                                <b-icon icon="telephone" class="mr-2"></b-icon>
-                                <span>{{ info.shop.seller }} - <b-link class="text-white money-contact" :href="'tel:' + info.shop.phone | phoneFormat">{{ info.shop.phone }}</b-link></span>
-                            </p>
-                            <p>
-                                <b-icon icon="geo-alt" class="mr-2"></b-icon>
-                                <span>{{ info.shop.address }}</span>
-                            </p>
-                        </b-card>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="6">
-                        <div class="money-facebook">
-                            <div 
-                                class="fb-page" 
-                                :data-href="info.facebook.link" 
-                                data-tabs="" 
-                                data-width="" 
-                                data-height="" 
-                                data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"
-                            >
-                                <blockquote :cite="info.facebook.link" class="fb-xfbml-parse-ignore">
-                                    <a :href="info.facebook.link">
-                                        {{ info.facebook.name }}
-                                    </a>
-                                </blockquote>
-                            </div>
-                        </div>
-                    </b-col>
-                </b-row>
-            </b-container>
-        </div>
+        <!-- Footer -->
+        <Footer :info="info"/>
     </div>
 </template>
 
 <script>
 import UpSell from './components/UpSell';
+import BirthdayForm from './components/BirthdayForm';
+import Footer from './components/Footer';
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
@@ -340,15 +269,12 @@ function parseData(entries) {
 export default {
     name: "App",
     components: {
-        UpSell
+        UpSell, BirthdayForm, Footer
     },
 
     data() {
         return {
             show: true,
-            day: null,
-            month: null,
-            year: null,
             info: null,
             selected: [],
             payment: 'cash',
@@ -356,12 +282,8 @@ export default {
             name: '',
             phone: '',
             address: '',
-            days: [{ text: "Ngày", value: null }],
-            months: [{ text: "Tháng", value: null }],
-            years: [{ text: "Năm", value: null }],
             price: 99,
             ship: 30,
-            dataTab: '1',
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             data: dataList,
@@ -379,10 +301,6 @@ export default {
     filters: {
         currencyFormat(value) {
             return value + 'k'
-        },
-
-        phoneFormat(value) {
-            return value.replace(/\.+/g, '')
         }
     },
 
@@ -401,37 +319,10 @@ export default {
     },
 
     methods: {
-        setDay() {
-            let day, 
-                dayInMonth = 31;
-            for (day = 1; day <= dayInMonth; day++) {
-                if (day < 10) day = '0' + day;
-                this.days.push(day);
-            }
-        },
-
-        setMonth() {
-            let month, 
-                monthInYear = 12;
-            for (month = 1; month <= monthInYear; month++) {
-                if (month < 10) month = '0' + month;
-                this.months.push(month);
-            }
-        },
-
-        setYear() {
-            let year, 
-                startYear = 1951, 
-                endYear = (new Date()).getFullYear();
-            for (year = endYear; year >= startYear; year--) {
-                this.years.push(year);
-            }
-        },
-
-        getData() {
+        getData(dataAPI) {
             // Fetch data from Google sheet file
-            if (this.dataAPI != '') {
-                axios.get(this.dataAPI)
+            if (dataAPI != '') {
+                axios.get(dataAPI)
                 .then(function(response) {
                     // handle success
                     parseData(response.data.feed.entry);
@@ -477,16 +368,16 @@ export default {
             }
         },
 
-        searchMoney() {
-            if (this.day == null || this.month == null || this.year == null) {
+        searchMoney(day, month, year) {
+            if (day == null || month == null || year == null) {
                 // Show alert
                 this.alert = true;
             }
             else {
-                let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
-                    selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
+                let selectedDay = parseInt(day) < 10 ? day.replace('0', '') : day,
+                    selectedMonth = parseInt(month) < 10 ? month.replace('0', '') : month,
                     selectedDate = selectedDay.toString() + selectedMonth.toString(),
-                    selectedYear = this.year;
+                    selectedYear = year;
 
                 // Hide alert
                 this.alert = false;
@@ -820,33 +711,6 @@ export default {
     },
 
     watch: {
-        month() {
-            // Watch month change and get data base on selected month
-            if (this.month != null) {
-                // Set data tab equal selected month
-                if (this.month == 11 || this.month == 12) {
-                    let fisrtDataTab, secondDataTab, fisrtDataAPI, secondDataAPI;
-                    // Update data tabs
-                    fisrtDataTab = this.month - 10;
-                    secondDataTab = this.month;
-                    // Update data APIs
-                    fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + fisrtDataTab + '/public/values?alt=json';
-                    secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + secondDataTab + '/public/values?alt=json';
-                    // Get multiple data
-                    this.getMultipleData(fisrtDataAPI, secondDataAPI);
-                }
-                else {
-                    // Update data tab
-                    this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
-                    // Update data API
-                    this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
-                    // Get data
-                    this.getData();
-                }
-                
-            }
-        },
-
         selected() {
             // Watch selected change and update ship fee
             if (this.selected.length > 1) {
@@ -873,14 +737,8 @@ export default {
     },
 
     mounted() {
-        // Set day in month
-        this.setDay(); 
-        // Set month in year
-        this.setMonth(); 
-        // Set range of year
-        this.setYear();
         // Get data
-        this.getData();
+        this.getData(this.dataAPI);
         // Get info
         this.getInfo();
         // Load facebook script
