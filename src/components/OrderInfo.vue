@@ -105,7 +105,7 @@
         <b-col cols="12" v-if="infoMessage">
             <b-form-group id="action">
                 <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
-                <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
+                <b-button type="button" variant="primary" class="m-3" @click="handlePostData">Đặt hàng</b-button>
             </b-form-group>
         </b-col>
     </b-row>
@@ -113,6 +113,49 @@
 
 <script>
 export default {
-    name: "OrderInfo"
+    name: "OrderInfo",
+    props: {
+        infoMessage: Boolean,
+        dataMissing: Boolean,
+        infoMissing: Boolean,
+        selected: Array,
+        payment: String,
+        bank: String,
+        ship: Number
+    },
+
+    data() {
+        return {
+            name: '',
+            phone: '',
+            address: ''
+        }
+    },
+
+    filters: {
+        currencyFormat(value) {
+            return value + 'k'
+        }
+    },
+
+    computed: {
+        total() {
+            let total = 0, selectedPrice = 0;
+            // Calculate total price
+            if (this.selected.length > 0) {
+                this.selected.forEach((value) => {
+                    selectedPrice = selectedPrice + value.price;
+                });
+                total = selectedPrice + this.ship
+            }
+            return total;
+        }
+    },
+
+    methods: {
+        handlePostData() {
+            this.$emit('post', this.name, this.phone, this.address, this.total);
+        }
+    }
 }
 </script>
