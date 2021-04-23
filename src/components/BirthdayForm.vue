@@ -42,11 +42,14 @@
 </template>
 
 <script>
+import {parseData, parseOtherData} from '../helper';
+
 export default {
     name: "BirthdayForm",
     props: {
         data: Function,
         dataId: String,
+        otherDataId: String,
         multipleData: Function
     },
 
@@ -60,8 +63,11 @@ export default {
             years: [{ text: "Năm", value: null }],
             dataTab: null,
             dataAPI: null,
+            otherDataAPI: null,
             fisrtDataAPI: null,
-            secondDataAPI: null
+            secondDataAPI: null,
+            fisrtOtherDataAPI: null,
+            secondOtherDataAPI: null
         }
     },
 
@@ -113,7 +119,12 @@ export default {
                     this.fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
                     this.secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.second + '/public/values?alt=json';
                     // Get multiple data
-                    this.multipleData(this.fisrtDataAPI, this.secondDataAPI);
+                    this.multipleData(this.fisrtDataAPI, this.secondDataAPI, parseData);
+                    // Update other data APIs
+                    this.fisrtOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
+                    this.secondOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.second + '/public/values?alt=json';
+                    // Get multiple data
+                    this.multipleData(this.fisrtOtherDataAPI, this.secondOtherDataAPI, parseOtherData);
                 }
                 else {
                     // Update data tab
@@ -121,7 +132,11 @@ export default {
                     // Update data API
                     this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab + '/public/values?alt=json';
                     // Get data
-                    this.data(this.dataAPI);
+                    this.data(this.dataAPI, parseData);
+                    // Update other data API
+                    this.otherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab + '/public/values?alt=json'
+                    // Get other data
+                    this.data(this.otherDataAPI, parseOtherData);
                 }
             }
         }

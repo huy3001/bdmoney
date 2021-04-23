@@ -23,6 +23,7 @@
                     <BirthdayForm 
                         :data="getData"
                         :data-id="dataID"
+                        :other-data-id="otherDataID"
                         :multiple-data="getMultipleData"
                         @search="searchMoney"
                     />
@@ -80,8 +81,8 @@ import Footer from './components/Footer';
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
+import {dataList, parseData, parseOtherData} from './helper';
 
-var dataList = [];
 // URL of info file
 const infoUrl = window.location.href + 'info.json';
 // Google sheets instance
@@ -98,25 +99,6 @@ const keys = {
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account-1%40birthday-money-288815.iam.gserviceaccount.com"
-}
-
-// Parse data from API
-function parseData(entries) {
-    // Reset data list
-    dataList.length = 0;
-
-    // Get entry from entries
-    entries.forEach((value) => {
-        var entry = {
-            'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
-            'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
-            'year': value.gsx$tấtcảnămsinh.$t.split('-'),
-            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
-            'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
-        }
-        // Push entry into the data list
-        dataList.push(entry);
-    })
 }
 
 export default {
@@ -136,6 +118,8 @@ export default {
             ship: 30,
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
+            otherDataID: '14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4',
+            otherDataAPI: 'https://spreadsheets.google.com/feeds/list/14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4/1/public/values?alt=json',
             data: dataList,
             results: [],
             serialKey: 0,
@@ -149,7 +133,7 @@ export default {
     },
 
     methods: {
-        getData(dataAPI) {
+        getData(dataAPI, parseData) {
             // Fetch data from Google sheet file
             if (dataAPI != '') {
                 axios.get(dataAPI)
@@ -164,7 +148,7 @@ export default {
             }
         },
 
-        getMultipleData(firstDataAPI, secondDataAPI) {
+        getMultipleData(firstDataAPI, secondDataAPI, parseData) {
             // Fetch multiple data from Google sheet file
             let firstData, secondData, mergedData;
             const getFirstData = axios.get(firstDataAPI);
@@ -295,7 +279,7 @@ export default {
                 }, 200);
                 
                 // Assign result list to results
-                this.results = [...resultList];
+                this.results = resultList;
 
                 // Split money serial
                 this.moneySerialSplit();
@@ -568,7 +552,9 @@ export default {
 
     mounted() {
         // Get data
-        this.getData(this.dataAPI);
+        this.getData(this.dataAPI, parseData);
+        // Get other data
+        this.getData(this.otherDataAPI, parseOtherData);
         // Get info
         this.getInfo();
         // Load facebook script
