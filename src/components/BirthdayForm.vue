@@ -42,15 +42,13 @@
 </template>
 
 <script>
-import {parseData, parseOtherData} from '../helper';
+import axios from 'axios';
 
 export default {
     name: "BirthdayForm",
     props: {
-        data: Function,
         dataId: String,
-        otherDataId: String,
-        multipleData: Function
+        otherDataId: String
     },
 
     data() {
@@ -61,6 +59,7 @@ export default {
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
+            dataList: [],
             dataTab: null,
             dataAPI: null,
             otherDataAPI: null,
@@ -99,7 +98,95 @@ export default {
             }
         },
 
+        // Parse data from API
+        parseData(entries) {
+            // Reset data list
+            this.dataList.length = 0;
+
+            // Get entry from entries
+            entries.forEach((value) => {
+                var entry = {
+                    'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
+                    'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
+                    'year': value.gsx$tấtcảnămsinh.$t.split('-'),
+                    'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
+                    'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
+                }
+                // Push entry into the data list
+                this.dataList.push(entry);
+            })
+        },
+
+        // Parse other data from API
+        parseOtherData(entries) {
+            // Get other entry from entries
+            entries.forEach((value) => {
+                let day = value.gsx$ngày.$t.replace(/\s+/g, '');
+                let year = [];
+
+                for (const property in value) {
+                    // Get value of years
+                    if (property.includes('gsx$_')) {
+                        // Define years are 2k or 19xx and push to array
+                        if (parseInt(value[property].$t) < 51) {
+                            year.push(parseInt(value[property].$t) + 2000);
+                        }
+                        else {
+                            year.push(parseInt(value[property].$t) + 1900);
+                        }
+                    }
+                }
+
+                var otherEntry = {
+                    'day': day.substring(0, 2),
+                    'month': day.charAt(day.length - 1),
+                    'year': year,
+                    'money': value.gsx$mg.$t.replace(/[a-zA-Z]|\s+/g, ''),
+                    'seri': value.gsx$kýtự.$t.replace(/\s+/g, ''),
+                }
+                
+                // Push entry into the data list
+                this.dataList.push(otherEntry);
+            })
+        },
+
+        getData(dataAPI, parseData) {
+            // Fetch data from Google sheet file
+            if (dataAPI != '') {
+                axios.get(dataAPI)
+                .then(function(response) {
+                    // handle success
+                    parseData(response.data.feed.entry);
+                })
+                .catch(function(error) {
+                    // handle error
+                    console.log(error);
+                })
+            }
+        },
+
+        getMultipleData(firstDataAPI, secondDataAPI, parseData) {
+            // Fetch multiple data from Google sheet file
+            let firstData, secondData, mergedData;
+            const getFirstData = axios.get(firstDataAPI);
+            const getSecondData = axios.get(secondDataAPI);
+            Promise.all([getFirstData, getSecondData])
+            .then(function(results) {
+                firstData = results[0].data.feed.entry;
+                secondData = results[1].data.feed.entry;
+                mergedData = firstData.concat(secondData);
+                parseData(mergedData);
+            })
+            .catch(function(error) {
+                // handle error
+                console.log(error);
+            });
+        },
+
         handleSearchMoney() {
+            // Handle data
+            this.$emit('data', this.dataList);
+            // Handle search
             this.$emit('search', this.day, this.month, this.year);
         }
     },
@@ -119,12 +206,12 @@ export default {
                     this.fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
                     this.secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.second + '/public/values?alt=json';
                     // Get multiple data
-                    this.multipleData(this.fisrtDataAPI, this.secondDataAPI, parseData);
+                    this.getMultipleData(this.fisrtDataAPI, this.secondDataAPI, this.parseData);
                     // Update other data APIs
                     this.fisrtOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
                     this.secondOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.second + '/public/values?alt=json';
                     // Get multiple data
-                    this.multipleData(this.fisrtOtherDataAPI, this.secondOtherDataAPI, parseOtherData);
+                    this.getMultipleData(this.fisrtOtherDataAPI, this.secondOtherDataAPI, this.parseOtherData);
                 }
                 else {
                     // Update data tab
@@ -132,11 +219,11 @@ export default {
                     // Update data API
                     this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab + '/public/values?alt=json';
                     // Get data
-                    this.data(this.dataAPI, parseData);
+                    this.getData(this.dataAPI, this.parseData);
                     // Update other data API
                     this.otherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab + '/public/values?alt=json'
                     // Get other data
-                    this.data(this.otherDataAPI, parseOtherData);
+                    this.getData(this.otherDataAPI, this.parseOtherData);
                 }
             }
         }

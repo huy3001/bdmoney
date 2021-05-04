@@ -21,10 +21,9 @@
                 <b-form id="birthday" @reset="onReset" v-if="show">
                     <!-- Choose birthday form -->
                     <BirthdayForm 
-                        :data="getData"
                         :data-id="dataID"
                         :other-data-id="otherDataID"
-                        :multiple-data="getMultipleData"
+                        @data="handleData"
                         @search="searchMoney"
                     />
 
@@ -81,7 +80,6 @@ import Footer from './components/Footer';
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
-import {dataList, parseData, parseOtherData} from './helper';
 
 // URL of info file
 const infoUrl = window.location.href + 'info.json';
@@ -120,7 +118,7 @@ export default {
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
             otherDataID: '14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4',
             otherDataAPI: 'https://spreadsheets.google.com/feeds/list/14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4/1/public/values?alt=json',
-            data: dataList,
+            data: [],
             results: [],
             serialKey: 0,
             alert: false,
@@ -133,39 +131,6 @@ export default {
     },
 
     methods: {
-        getData(dataAPI, parseData) {
-            // Fetch data from Google sheet file
-            if (dataAPI != '') {
-                axios.get(dataAPI)
-                .then(function(response) {
-                    // handle success
-                    parseData(response.data.feed.entry);
-                })
-                .catch(function(error) {
-                    // handle error
-                    console.log(error);
-                })
-            }
-        },
-
-        getMultipleData(firstDataAPI, secondDataAPI, parseData) {
-            // Fetch multiple data from Google sheet file
-            let firstData, secondData, mergedData;
-            const getFirstData = axios.get(firstDataAPI);
-            const getSecondData = axios.get(secondDataAPI);
-            Promise.all([getFirstData, getSecondData])
-            .then(function(results) {
-                firstData = results[0].data.feed.entry;
-                secondData = results[1].data.feed.entry;
-                mergedData = firstData.concat(secondData);
-                parseData(mergedData);
-            })
-            .catch(function(error) {
-                // handle error
-                console.log(error);
-            });
-        },
-        
         getInfo() {
             // Fetch info from json file
             let self = this;
@@ -180,6 +145,10 @@ export default {
                     console.log(error);
                 })
             }
+        },
+
+        handleData(dataList) {
+            this.data = dataList;
         },
 
         searchMoney(day, month, year) {
@@ -551,10 +520,6 @@ export default {
     },
 
     mounted() {
-        // Get data
-        this.getData(this.dataAPI, parseData);
-        // Get other data
-        this.getData(this.otherDataAPI, parseOtherData);
         // Get info
         this.getInfo();
         // Load facebook script
