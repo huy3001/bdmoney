@@ -8,6 +8,7 @@ module.exports = {
             alias: {
                 fs: path.resolve(__dirname, 'src/mock-fs.js')
             }
-        }
+        },
+        devtool: 'source-map'
     }
 }
