@@ -18,49 +18,17 @@
                     </b-col>
                 </b-row>
 
-                <!-- Choose birthday form -->
                 <b-form id="birthday" @reset="onReset" v-if="show">
-                    <b-row>
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="day-selection">
-                                <b-form-select
-                                    id="day"
-                                    v-model="day"
-                                    :options="days"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
+                    <!-- Choose birthday form -->
+                    <BirthdayForm 
+                        :data="getData"
+                        :data-id="dataID"
+                        :other-data-id="otherDataID"
+                        :multiple-data="getMultipleData"
+                        @search="searchMoney"
+                    />
 
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="month-selection">
-                                <b-form-select
-                                    id="month"
-                                    v-model="month"
-                                    :options="months"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="4" lg="3">
-                            <b-form-group id="year-selection">
-                                <b-form-select
-                                    id="month"
-                                    v-model="year"
-                                    :options="years"
-                                    required
-                                ></b-form-select>
-                            </b-form-group>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="12" lg="3">
-                            <b-form-group id="search">
-                                <b-button type="button" variant="success" @click="searchMoney">Tìm tiền sinh nhật</b-button>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-
+                    <!-- Messages -->
                     <b-row>
                         <b-col cols="12">
                             <b-alert show variant="danger" v-if="alert">
@@ -77,229 +45,44 @@
                         </b-col>
                     </b-row>
 
-                    <b-row>
-                        <b-col cols="12" sm="12" md="6" v-for="(result, index) in results" :key="index">
-                            <b-alert show variant="success">
-                                Có 1 tờ {{ result.money * 1000 }} seri {{ result.seri + ' ' + result.day + result.month + result.year }}
-                            </b-alert>
+                    <!-- Result list -->
+                    <ResultList
+                        :results="results"
+                        :serial-key="serialKey"
+                        @select="selectMoney"
+                    />
 
-                            <b-form-group :class="['position-relative', 'money-form-group', 'money-type-' + result.money * 1000]">
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/500d.jpg" fluid alt="500d" v-if="result.money == '0.5'"></b-img>
-
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/1000d.jpg" fluid alt="1000d" v-if="result.money == '1'"></b-img>
-                                
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/2000d.jpg" fluid alt="2000d" v-if="result.money == '2'"></b-img>
-                                
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/5000d.jpg" fluid alt="5000d" v-if="result.money == '5'"></b-img>
-                                
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '10'"></b-img>
-                                
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '20'"></b-img>
-                                
-                                <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
-                                <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
-
-                                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50'}]" :key="serialKey">
-                                    <span class="money-serial-text">{{ result.seri }}</span>
-                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                                </span>
-                                
-                                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50'" :key="serialKey + 1">
-                                    <span class="money-serial-text">{{ result.seri }}</span>
-                                    <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
-                                </span>
-
-                                <div class="d-flex justify-content-between money-info">
-                                    <span class="mt-2 money-price">Giá bán: <b>{{ result.price | currencyFormat }}</b></span>
-
-                                    <b-form-checkbox
-                                        class="mt-2 money-checkbox"
-                                        v-model="selected"
-                                        :id="'money-checkbox-' + index"
-                                        :name="'money-checkbox-' + index"
-                                        :value="{ 'money': result.money * 1000 + ' ' + result.seri + ' ' + result.day + result.month + result.year, 'price': result.price }"
-                                    >
-                                        Chọn mua
-                                    </b-form-checkbox>
-                                </div>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
-
-                    <b-row>
-                        <b-col cols="12">
-                            <b-alert show variant="info" v-if="infoMessage">
-                                Thông tin đơn hàng
-                            </b-alert>
-
-                            <b-alert show variant="danger" v-if="dataMissing">
-                                <p class="mb-0" v-if="selected.length == 0">Bạn phải chọn ít nhất 1 tờ tiền</p>
-                                <p class="mb-0" v-if="payment == ''">Vui lòng chọn hình thức thanh toán</p>
-                                <p class="mb-0" v-if="payment != '' && bank == ''">Bạn cần chọn ngân hàng để chuyển khoản</p>
-                                <p class="mb-0" v-if="infoMissing">Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng</p>
-                            </b-alert>
-                        </b-col>
-
-                        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-                            <b-list-group class="text-left mb-3 money-order">
-                                <b-list-group-item>
-                                    <span class="mr-1">Bạn đã chọn:</span>
-                                    <span 
-                                        class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
-                                        v-for="(item, index) in selected" 
-                                        :key="index"
-                                    >
-                                        {{ item.money }}
-                                    </span>    
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
-                                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
-                                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <strong class="money-total">Tổng tiền: {{ total | currencyFormat }}</strong>
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <!-- <span>Hình thức thanh toán:</span> -->
-
-                                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash"> -->
-                                        <span class="money-payment-text">Thanh toán khi nhận hàng</span>
-                                    <!-- </b-form-radio> -->
-
-                                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
-                                        <span class="money-payment-text">Chuyển khoản trước (Miễn phí ship)</span>
-                                        <p class="my-2 text-secondary money-payment-note" v-if="payment == 'bank'">Nội dung chuyển khoản: Tên + SDT đặt hàng</p>
-                                    </b-form-radio>
-
-                                    <b-card no-body class="d-flex my-2 money-payment-bank" v-if="payment == 'bank'">
-                                        <b-form-radio 
-                                            v-for="(item, index) in info.bank"
-                                            :key="index"
-                                            class="p-4 pl-0 money-bank" 
-                                            v-model="bank" 
-                                            name="bank-transfer" 
-                                            :value="item.name"
-                                        >
-                                            <b-img :class="['border', {'border-success': bank == item.name}, 'money-bank-logo']" width="200" height="200" :src="item.logo" fluid :alt="item.name"></b-img>
-
-                                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == item.name">
-                                                {{ item.account }}
-                                                <br>
-                                                {{ item.name }}
-                                                <br>
-                                                {{ item.number }}
-                                            </p>
-                                        </b-form-radio>
-                                    </b-card> -->
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <b-form-input
-                                        v-model="name"
-                                        placeholder="Họ và tên"
-                                        required
-                                        :state="infoMissing ? false : null"
-                                    ></b-form-input>
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <b-form-input
-                                        type="number"
-                                        v-model="phone"
-                                        placeholder="Số điện thoại"
-                                        required
-                                        :state="infoMissing ? false : null"
-                                    ></b-form-input>
-                                </b-list-group-item>
-
-                                <b-list-group-item>
-                                    <b-form-textarea
-                                        v-model="address"
-                                        placeholder="Địa chỉ cụ thể (số nhà, tên đường, thôn, xóm)"
-                                        rows="3"
-                                        no-resize
-                                        required
-                                        :state="infoMissing ? false : null"
-                                    ></b-form-textarea>
-                                </b-list-group-item>
-                            </b-list-group>
-                        </b-col>
-
-                        <b-col cols="12" v-if="infoMessage">
-                            <b-form-group id="action">
-                                <b-button type="reset" variant="danger" class="m-3">Chọn lại</b-button>
-                                <b-button type="button" variant="primary" class="m-3" @click="postData">Đặt hàng</b-button>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
+                    <!-- Order info -->
+                    <OrderInfo
+                        :info-message="infoMessage"
+                        :data-missing="dataMissing"
+                        :info-missing="infoMissing"
+                        :selected="selected"
+                        :payment="payment"
+                        :bank="bank"
+                        :ship="ship"
+                        @post="postData"
+                    />
                 </b-form>
             </b-container>
         </div>
 
-        <div class="bg-dark text-white py-4 money-footer" v-if="info">
-            <b-container>
-                <b-row>
-                    <b-col cols="12" sm="12" md="6">
-                        <b-card no-body class="bg-dark border-0 text-white money-store">
-                            <p class="font-italic font-weight-bold text-warning money-slogan">
-                                {{ info.shop.slogan }}
-                            </p>
-                            <p>
-                                <b-icon icon="globe2" class="mr-2"></b-icon>
-                                <b-link class="text-white money-website" :href="info.shop.website">{{ info.shop.name }}</b-link>
-                            </p>
-                            <p>
-                                <b-icon icon="telephone" class="mr-2"></b-icon>
-                                <span>{{ info.shop.seller }} - <b-link class="text-white money-contact" :href="'tel:' + info.shop.phone | phoneFormat">{{ info.shop.phone }}</b-link></span>
-                            </p>
-                            <p>
-                                <b-icon icon="geo-alt" class="mr-2"></b-icon>
-                                <span>{{ info.shop.address }}</span>
-                            </p>
-                        </b-card>
-                    </b-col>
-
-                    <b-col cols="12" sm="12" md="6">
-                        <div class="money-facebook">
-                            <div 
-                                class="fb-page" 
-                                :data-href="info.facebook.link" 
-                                data-tabs="" 
-                                data-width="" 
-                                data-height="" 
-                                data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"
-                            >
-                                <blockquote :cite="info.facebook.link" class="fb-xfbml-parse-ignore">
-                                    <a :href="info.facebook.link">
-                                        {{ info.facebook.name }}
-                                    </a>
-                                </blockquote>
-                            </div>
-                        </div>
-                    </b-col>
-                </b-row>
-            </b-container>
-        </div>
+        <!-- Footer -->
+        <Footer :info="info"/>
     </div>
 </template>
 
 <script>
 import UpSell from './components/UpSell';
+import BirthdayForm from './components/BirthdayForm';
+import ResultList from './components/ResultList';
+import OrderInfo from './components/OrderInfo';
+import Footer from './components/Footer';
 import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
+import {dataList, parseData, parseOtherData} from './helper';
 
-var dataList = [];
 // URL of info file
 const infoUrl = window.location.href + 'info.json';
 // Google sheets instance
@@ -318,52 +101,25 @@ const keys = {
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/service-account-1%40birthday-money-288815.iam.gserviceaccount.com"
 }
 
-// Parse data from API
-function parseData(entries) {
-    // Reset data list
-    dataList.length = 0;
-
-    // Get entry from entries
-    entries.forEach((value) => {
-        var entry = {
-            'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
-            'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
-            'year': value.gsx$tấtcảnămsinh.$t.split('-'),
-            'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
-            'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
-        }
-        // Push entry into the data list
-        dataList.push(entry);
-    })
-}
-
 export default {
     name: "App",
     components: {
-        UpSell
+        UpSell, BirthdayForm, ResultList, OrderInfo, Footer
     },
 
     data() {
         return {
             show: true,
-            day: null,
-            month: null,
-            year: null,
             info: null,
             selected: [],
             payment: 'cash',
             bank: 'bank',
-            name: '',
-            phone: '',
-            address: '',
-            days: [{ text: "Ngày", value: null }],
-            months: [{ text: "Tháng", value: null }],
-            years: [{ text: "Năm", value: null }],
             price: 99,
             ship: 30,
-            dataTab: '1',
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
             dataAPI: 'https://spreadsheets.google.com/feeds/list/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/1/public/values?alt=json',
+            otherDataID: '14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4',
+            otherDataAPI: 'https://spreadsheets.google.com/feeds/list/14fPgycN0WGXYfCk_7kAA3MSFVyBUtdtmdUg9dY5N_g4/1/public/values?alt=json',
             data: dataList,
             results: [],
             serialKey: 0,
@@ -376,62 +132,11 @@ export default {
         };
     },
 
-    filters: {
-        currencyFormat(value) {
-            return value + 'k'
-        },
-
-        phoneFormat(value) {
-            return value.replace(/\.+/g, '')
-        }
-    },
-
-    computed: {
-        total() {
-            let total = 0, selectedPrice = 0;
-            // Calculate total price
-            if (this.selected.length > 0) {
-                this.selected.forEach((value) => {
-                    selectedPrice = selectedPrice + value.price;
-                });
-                total = selectedPrice + this.ship
-            }
-            return total;
-        }
-    },
-
     methods: {
-        setDay() {
-            let day, 
-                dayInMonth = 31;
-            for (day = 1; day <= dayInMonth; day++) {
-                if (day < 10) day = '0' + day;
-                this.days.push(day);
-            }
-        },
-
-        setMonth() {
-            let month, 
-                monthInYear = 12;
-            for (month = 1; month <= monthInYear; month++) {
-                if (month < 10) month = '0' + month;
-                this.months.push(month);
-            }
-        },
-
-        setYear() {
-            let year, 
-                startYear = 1951, 
-                endYear = (new Date()).getFullYear();
-            for (year = endYear; year >= startYear; year--) {
-                this.years.push(year);
-            }
-        },
-
-        getData() {
+        getData(dataAPI, parseData) {
             // Fetch data from Google sheet file
-            if (this.dataAPI != '') {
-                axios.get(this.dataAPI)
+            if (dataAPI != '') {
+                axios.get(dataAPI)
                 .then(function(response) {
                     // handle success
                     parseData(response.data.feed.entry);
@@ -443,7 +148,7 @@ export default {
             }
         },
 
-        getMultipleData(firstDataAPI, secondDataAPI) {
+        getMultipleData(firstDataAPI, secondDataAPI, parseData) {
             // Fetch multiple data from Google sheet file
             let firstData, secondData, mergedData;
             const getFirstData = axios.get(firstDataAPI);
@@ -477,16 +182,16 @@ export default {
             }
         },
 
-        searchMoney() {
-            if (this.day == null || this.month == null || this.year == null) {
+        searchMoney(day, month, year) {
+            if (day == null || month == null || year == null) {
                 // Show alert
                 this.alert = true;
             }
             else {
-                let selectedDay = parseInt(this.day) < 10 ? this.day.replace('0', '') : this.day,
-                    selectedMonth = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month,
+                let selectedDay = parseInt(day) < 10 ? day.replace('0', '') : day,
+                    selectedMonth = parseInt(month) < 10 ? month.replace('0', '') : month,
                     selectedDate = selectedDay.toString() + selectedMonth.toString(),
-                    selectedYear = this.year;
+                    selectedYear = year;
 
                 // Hide alert
                 this.alert = false;
@@ -574,7 +279,7 @@ export default {
                 }, 200);
                 
                 // Assign result list to results
-                this.results = [...resultList];
+                this.results = resultList;
 
                 // Split money serial
                 this.moneySerialSplit();
@@ -584,7 +289,13 @@ export default {
             }
         },
 
-        postData() {
+        selectMoney(selected, ship) {
+            this.selected = selected;
+            this.ship = ship;
+        },
+
+        postData(name, phone, address, total) {
+            // Get current time
             let date = new Date(),
                 currentDay = date.getDate(),
                 currentMonth = date.getMonth() + 1,
@@ -616,16 +327,16 @@ export default {
             // Gather all form value into an array
             let formValue = [
                 currentTime,
-                this.name,
-                this.phone,
-                this.address,
+                name,
+                phone,
+                address,
                 selectedMoney,
-                this.total + '000',
+                total + '000',
                 paymentMethod
             ]
-            
+
             // Check if client is missing or not
-            if (this.name != '' && this.phone != '' && this.address != '') {
+            if (name != '' && phone != '' && address != '') {
                 this.infoMissing = false;
             }
             else {
@@ -694,7 +405,7 @@ export default {
             }
 
             // Check data is not empty and post
-            if (this.selected.length > 0 && this.payment != '' && this.bank != '' && this.name != '' && this.phone != '' && this.address != '') {
+            if (this.selected.length > 0 && this.payment != '' && this.bank != '' && name != '' && phone != '' && address != '') {
                 this.dataMissing = false;
                 // Show success message
                 this.successMessage = true;
@@ -718,15 +429,9 @@ export default {
 
         onReset() {
             // Reset data
-            this.day = null;
-            this.month = null;
-            this.year = null;
             this.selected = [];
-            // this.payment = '';
+            this.payment = '';
             this.bank = '';
-            this.name = '';
-            this.phone = '';
-            this.address = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
@@ -820,33 +525,6 @@ export default {
     },
 
     watch: {
-        month() {
-            // Watch month change and get data base on selected month
-            if (this.month != null) {
-                // Set data tab equal selected month
-                if (this.month == 11 || this.month == 12) {
-                    let fisrtDataTab, secondDataTab, fisrtDataAPI, secondDataAPI;
-                    // Update data tabs
-                    fisrtDataTab = this.month - 10;
-                    secondDataTab = this.month;
-                    // Update data APIs
-                    fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + fisrtDataTab + '/public/values?alt=json';
-                    secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + secondDataTab + '/public/values?alt=json';
-                    // Get multiple data
-                    this.getMultipleData(fisrtDataAPI, secondDataAPI);
-                }
-                else {
-                    // Update data tab
-                    this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
-                    // Update data API
-                    this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataID + '/' + this.dataTab + '/public/values?alt=json';
-                    // Get data
-                    this.getData();
-                }
-                
-            }
-        },
-
         selected() {
             // Watch selected change and update ship fee
             if (this.selected.length > 1) {
@@ -873,14 +551,10 @@ export default {
     },
 
     mounted() {
-        // Set day in month
-        this.setDay(); 
-        // Set month in year
-        this.setMonth(); 
-        // Set range of year
-        this.setYear();
         // Get data
-        this.getData();
+        this.getData(this.dataAPI, parseData);
+        // Get other data
+        this.getData(this.otherDataAPI, parseOtherData);
         // Get info
         this.getInfo();
         // Load facebook script
