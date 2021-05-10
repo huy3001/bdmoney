@@ -43,6 +43,7 @@
 
 <script>
 import axios from 'axios';
+import $ from 'jquery';
 
 export default {
     name: "BirthdayForm",
@@ -183,11 +184,13 @@ export default {
             });
         },
 
-        handleSearchMoney() {
+        handleSearchMoney(event) {
             // Handle data
             this.$emit('data', this.dataList);
             // Handle search
             this.$emit('search', this.day, this.month, this.year);
+            // Trigger search twice
+            $(event.target).trigger('click');
         }
     },
 
