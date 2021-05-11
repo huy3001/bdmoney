@@ -34,6 +34,10 @@
                                 Vui lòng chọn ngày bạn muốn tìm
                             </b-alert>
 
+                            <b-alert show variant="secondary" v-if="empty">
+                                Có thể lỗi tìm kiếm, bạn vui lòng thử click tìm lại nhé 
+                            </b-alert>
+                            
                             <b-alert show variant="warning" v-if="empty">
                                 Ngày bạn chọn hiện chưa có, bạn tìm ngày khác nhé
                             </b-alert>
