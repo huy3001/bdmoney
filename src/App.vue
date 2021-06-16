@@ -220,10 +220,18 @@ export default {
                                         itemPrice = this.price;
                                 }
 
+                                // Update month for polymer cash 
+                                if (parseInt(item.money) >= 10 && parseInt(item.month) < 10) {
+                                    itemMonth = '0' + item.month;
+                                }
+                                else {
+                                    itemMonth = item.month
+                                }
+
                                 // Create result object
                                 result = {
                                     'day': item.day,
-                                    'month': item.month,
+                                    'month': itemMonth,
                                     'year': selectedYear,
                                     'money': item.money,
                                     'price': itemPrice,
