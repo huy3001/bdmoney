@@ -411,8 +411,8 @@ export default {
         onReset() {
             // Reset data
             this.selected = [];
-            this.payment = '';
-            this.bank = '';
+            // this.payment = '';
+            // this.bank = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
