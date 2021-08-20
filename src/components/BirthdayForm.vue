@@ -60,6 +60,7 @@ export default {
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
+            apiKey: 'AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
             dataList: [],
             dataTab: null,
             dataAPI: null,
@@ -105,59 +106,78 @@ export default {
             this.dataList.length = 0;
 
             // Get entry from entries
-            entries.forEach((value) => {
-                var entry = {
-                    'day': value.gsx$ngày.$t.replace(/\s+/g, ''),
-                    'month': value.gsx$tháng.$t.replace(/\s+/g, ''),
-                    'year': value.gsx$tấtcảnămsinh.$t.split('-'),
-                    'money': value.gsx$mệnhgiá.$t.replace(/[a-zA-Z]|\s+/g, ''),
-                    'seri': value.gsx$kítự.$t.replace(/\s+/g, ''),
+            var entry = {};
+            entries.forEach((item, index) => {
+                if (index != 0) {
+                    let year = [];
+
+                    item.forEach((value, index) => {
+                        if (value != '' && index > 3) {
+                            year.push(value.replace(/\D+/g, ''));
+                        }
+                    })
+
+                    entry = {
+                        'day': item[0].replace(/\D+/g, ''),
+                        'month': item[1].replace(/\D+/g, ''),
+                        'year': year,
+                        'money': item[2].replace(/[a-zA-Z]|\s+/g, ''),
+                        'seri': item[3].replace(/\s+/g, ''),
+                    }
+                    
+                    // Push entry into the data list
+                    this.dataList.push(entry);
                 }
-                // Push entry into the data list
-                this.dataList.push(entry);
             })
         },
 
         // Parse other data from API
         parseOtherData(entries) {
             // Get other entry from entries
-            entries.forEach((value) => {
-                let day = value.gsx$ngày.$t.replace(/\s+/g, '');
-                let year = [];
+            var otherEntry = {};
+            entries.forEach((item, index) => {
+                if (index != 0) {
+                    let day = item[0].replace(/\D+/g, '');
+                    let year = [];
 
-                for (const property in value) {
-                    // Get value of years
-                    if (property.includes('gsx$_')) {
-                        // Define years are 2k or 19xx and push to array
-                        if (parseInt(value[property].$t) < 51) {
-                            year.push(parseInt(value[property].$t) + 2000);
+                    item.forEach((value, index) => {
+                        if (value != '' && index > 2) {
+                            value = value.replace(/\D+/g, '');
+                            // Define years are 2k or 19xx and push to array
+                            if (parseInt(value) < 51) {
+                                year.push(parseInt(value) + 2000);
+                            }
+                            else {
+                                year.push(parseInt(value) + 1900);
+                            }
                         }
-                        else {
-                            year.push(parseInt(value[property].$t) + 1900);
-                        }
+                    })
+
+                    otherEntry = {
+                        'day': day.substring(0, 2),
+                        'month': day.charAt(day.length - 1),
+                        'year': year,
+                        'money': item[1].replace(/[a-zA-Z]|\s+/g, ''),
+                        'seri': item[2].replace(/\s+/g, ''),
                     }
+                    
+                    // Push entry into the data list
+                    this.dataList.push(otherEntry);
                 }
-
-                var otherEntry = {
-                    'day': day.substring(0, 2),
-                    'month': day.charAt(day.length - 1),
-                    'year': year,
-                    'money': value.gsx$mg.$t.replace(/[a-zA-Z]|\s+/g, ''),
-                    'seri': value.gsx$kýtự.$t.replace(/\s+/g, ''),
-                }
-                
-                // Push entry into the data list
-                this.dataList.push(otherEntry);
             })
         },
 
-        getData(dataAPI, parseData) {
+        getAPI(apiID, apiTab) {
+            return 'https://sheets.googleapis.com/v4/spreadsheets/' + apiID + '/values/' + apiTab + '?alt=json&key=' + this.apiKey;
+        },
+
+        getData(dataAPI, handleData) {
             // Fetch data from Google sheet file
             if (dataAPI != '') {
                 axios.get(dataAPI)
                 .then(function(response) {
                     // handle success
-                    parseData(response.data.feed.entry);
+                    handleData(response.data.values);
                 })
                 .catch(function(error) {
                     // handle error
@@ -166,17 +186,17 @@ export default {
             }
         },
 
-        getMultipleData(firstDataAPI, secondDataAPI, parseData) {
+        getMultipleData(firstDataAPI, secondDataAPI, handleData) {
             // Fetch multiple data from Google sheet file
             let firstData, secondData, mergedData;
             const getFirstData = axios.get(firstDataAPI);
             const getSecondData = axios.get(secondDataAPI);
             Promise.all([getFirstData, getSecondData])
             .then(function(results) {
-                firstData = results[0].data.feed.entry;
-                secondData = results[1].data.feed.entry;
+                firstData = results[0].data.values;
+                secondData = results[1].data.values;
                 mergedData = firstData.concat(secondData);
-                parseData(mergedData);
+                handleData(mergedData);
             })
             .catch(function(error) {
                 // handle error
@@ -206,13 +226,13 @@ export default {
                         second: this.month
                     }
                     // Update data APIs
-                    this.fisrtDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
-                    this.secondDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab.second + '/public/values?alt=json';
+                    this.fisrtDataAPI = this.getAPI(this.dataId, this.dataTab.fisrt);
+                    this.secondDataAPI = this.getAPI(this.dataId, this.dataTab.second);
                     // Get multiple data
                     this.getMultipleData(this.fisrtDataAPI, this.secondDataAPI, this.parseData);
                     // Update other data APIs
-                    this.fisrtOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.fisrt + '/public/values?alt=json';
-                    this.secondOtherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab.second + '/public/values?alt=json';
+                    this.fisrtOtherDataAPI = this.getAPI(this.otherDataId, this.dataTab.fisrt);
+                    this.secondOtherDataAPI = this.getAPI(this.otherDataId, this.dataTab.second);
                     // Get multiple data
                     this.getMultipleData(this.fisrtOtherDataAPI, this.secondOtherDataAPI, this.parseOtherData);
                 }
@@ -220,11 +240,11 @@ export default {
                     // Update data tab
                     this.dataTab = parseInt(this.month) < 10 ? this.month.replace('0', '') : this.month;
                     // Update data API
-                    this.dataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.dataId + '/' + this.dataTab + '/public/values?alt=json';
+                    this.dataAPI = this.getAPI(this.dataId, this.dataTab);
                     // Get data
                     this.getData(this.dataAPI, this.parseData);
                     // Update other data API
-                    this.otherDataAPI = 'https://spreadsheets.google.com/feeds/list/' + this.otherDataId + '/' + this.dataTab + '/public/values?alt=json'
+                    this.otherDataAPI = this.getAPI(this.otherDataId, this.dataTab);
                     // Get other data
                     this.getData(this.otherDataAPI, this.parseOtherData);
                 }
