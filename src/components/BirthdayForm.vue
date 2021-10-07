@@ -133,12 +133,28 @@ export default {
 
         // Parse other data from API
         parseOtherData(entries) {
+            var self = this;
             // Get other entry from entries
             var otherEntry = {};
             entries.forEach((item, index) => {
                 if (index != 0) {
-                    let day = item[0].replace(/\D+/g, '');
+                    let date = item[0].replace(/\D+/g, '');
+                    let day, month = null;
                     let year = [];
+
+                    if (parseInt(self.month) < 10) {
+                        day = date.substring(0, 2);
+                        month = date.substring(date.length - 1);
+                    }
+                    else {
+                        if (parseInt(self.day) < 10) {
+                            day = date.substring(0, 1);
+                        }
+                        else {
+                            day = date.substring(0, 2);
+                        }
+                        month = date.substring(date.length - 2);
+                    }
 
                     item.forEach((value, index) => {
                         if (value != '' && index > 2) {
@@ -154,11 +170,11 @@ export default {
                     })
 
                     otherEntry = {
-                        'day': day.substring(0, 2),
-                        'month': day.charAt(day.length - 1),
+                        'day': day,
+                        'month': month,
                         'year': year,
                         'money': item[1].replace(/[a-zA-Z]|\s+/g, ''),
-                        'seri': item[2].replace(/\s+/g, ''),
+                        'seri': item[2] != '' ? item[2].replace(/\s+/g, '') : '',
                     }
                     
                     // Push entry into the data list
