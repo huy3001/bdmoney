@@ -147,7 +147,7 @@ export default {
                         month = date.substring(date.length - 1);
                     }
                     else {
-                        if (parseInt(self.day) < 10) {
+                        if (date.length < 4) {
                             day = date.substring(0, 1);
                         }
                         else {
@@ -174,7 +174,7 @@ export default {
                         'month': month,
                         'year': year,
                         'money': item[1].replace(/[a-zA-Z]|\s+/g, ''),
-                        'seri': item[2] != '' ? item[2].replace(/\s+/g, '') : '',
+                        'seri': item[2] != undefined ? item[2].replace(/\s+/g, '') : '',
                     }
                     
                     // Push entry into the data list
