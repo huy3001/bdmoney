@@ -216,6 +216,12 @@ export default {
                                     case '50':
                                         itemPrice = this.info.price.fiftythousand;
                                         break;
+                                    case '100':
+                                        itemPrice = this.info.price.onehundredthousand;
+                                        break;
+                                    case '200':
+                                        itemPrice = this.info.price.twohundredthousand;
+                                        break;
                                     default:
                                         itemPrice = this.price;
                                 }
