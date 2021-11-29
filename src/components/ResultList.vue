@@ -27,11 +27,11 @@
                 <b-img :id="result.money + index" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
                 <b-img class="money-image" width="700" height="337" src="./images/50000d.jpg" fluid alt="50000d" v-if="result.money == '50'"></b-img>
 
-                <b-img :id="result.money + index" width="700" height="337" src="./images/10000d.jpg" fluid alt="100000d" v-if="result.money == '100'"></b-img>
-                <b-img class="money-image" width="700" height="337" src="./images/10000d.jpg" fluid alt="10000d" v-if="result.money == '100'"></b-img>
+                <b-img :id="result.money + index" width="700" height="337" src="./images/100000d.jpg" fluid alt="100000d" v-if="result.money == '100'"></b-img>
+                <b-img class="money-image" width="700" height="337" src="./images/100000d.jpg" fluid alt="100000d" v-if="result.money == '100'"></b-img>
                 
-                <b-img :id="result.money + index" width="700" height="337" src="./images/20000d.jpg" fluid alt="200000d" v-if="result.money == '200'"></b-img>
-                <b-img class="money-image" width="700" height="337" src="./images/20000d.jpg" fluid alt="20000d" v-if="result.money == '200'"></b-img>
+                <b-img :id="result.money + index" width="700" height="337" src="./images/200000d.jpg" fluid alt="2000000d" v-if="result.money == '200'"></b-img>
+                <b-img class="money-image" width="700" height="337" src="./images/200000d.jpg" fluid alt="200000d" v-if="result.money == '200'"></b-img>
 
                 <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'}]" :key="serialKey">
                     <span class="money-serial-text">{{ result.seri }}</span>
