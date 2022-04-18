@@ -216,6 +216,12 @@ export default {
                                     case '50':
                                         itemPrice = this.info.price.fiftythousand;
                                         break;
+                                    case '100':
+                                        itemPrice = this.info.price.onehundredthousand;
+                                        break;
+                                    case '200':
+                                        itemPrice = this.info.price.twohundredthousand;
+                                        break;
                                     default:
                                         itemPrice = this.price;
                                 }
@@ -816,6 +822,16 @@ export default {
             top: 20%;
         }
 
+        .money-type-100000 & {
+            left: 2%;
+            top: 20%;
+        }
+
+        .money-type-200000 & {
+            left: 3%;
+            top: 18%;
+        }
+
         .character {
             display: block;
         }
@@ -920,6 +936,53 @@ export default {
 
             @media (min-width: 1200px) {
                 top: 76%;
+            }
+        }
+
+        .money-type-100000 & {
+            left: 71%;
+            top: 70%;
+
+            @media (min-width: 400px) {
+                left: 71%;
+                top: 71%;
+            }
+
+            @media (min-width: 768px) {
+                top: 68%;
+            }
+
+            @media (min-width: 992px) {
+                top: 72%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 73%;
+            }
+        }
+
+        .money-type-200000 & {
+            left: 74%;
+            top: 71%;
+
+            @media (min-width: 400px) {
+                top: 70%;
+            }
+
+            @media (min-width: 576px) {
+                top: 73%;
+            }
+
+            @media (min-width: 768px) {
+                top: 69%;
+            }
+
+            @media (min-width: 992px) {
+                top: 72%;
+            }
+
+            @media (min-width: 1200px) {
+                top: 74%;
             }
         }
     }
