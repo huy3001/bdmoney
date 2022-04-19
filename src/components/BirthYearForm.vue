@@ -74,20 +74,32 @@ export default {
             var entry = {};
             entries.forEach((item, index) => {
                 if (index != 0) {
+                    let date = item[0].replace(/\D+/g, '');
+                    let day, month = null;
                     let year = [];
 
+                    day = date.substring(0, 2);
+                    month = date.substring(date.length - 2);
+
                     item.forEach((value, index) => {
-                        if (value != '' && index > 3) {
-                            year.push(value.replace(/\D+/g, ''));
+                        if (value != '' && index > 2) {
+                            value = value.replace(/\D+/g, '');
+                            // Define years are 2k or 19xx and push to array
+                            if (parseInt(value) < 51) {
+                                year.push(parseInt(value) + 2000);
+                            }
+                            else {
+                                year.push(parseInt(value) + 1900);
+                            }
                         }
                     })
 
                     entry = {
-                        'day': item[0].replace(/\D+/g, ''),
-                        'month': item[1].replace(/\D+/g, ''),
+                        'day': day,
+                        'month': month,
                         'year': year,
-                        'money': item[2].replace(/[a-zA-Z]|\s+/g, ''),
-                        'seri': item[3].replace(/\s+/g, ''),
+                        'money': item[1].replace(/[a-zA-Z]|\s+/g, ''),
+                        'seri': item[2] != undefined ? item[2].replace(/\s+/g, '') : '',
                     }
                     
                     // Push entry into the data list
@@ -115,7 +127,7 @@ export default {
             // Handle data
             this.$emit('data', this.dataList);
             // Handle search
-            // this.$emit('search', this.day, this.month, this.year);
+            this.$emit('search', this.firstYear.substring(0, 2), this.firstYear.substring(this.firstYear.length - 2), this.secondYear);
             // Trigger search twice
             $(event.target).trigger('click');
         }
