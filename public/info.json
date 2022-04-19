@@ -42,5 +42,21 @@
         "fiftythousand": 239,
         "onehundredthousand": 399,
         "twohundredthousand": 499
+    },
+    "coupleprice": {
+        "tenthousand": 200,
+        "twentythousand": 220,
+        "fiftythousand": 250,
+        "onehundredthousand": 300,
+        "twohundredthousand": 400,
+        "fivehundredthousand": 800
+    },
+    "specialprice": {
+        "tenthousand": 400,
+        "twentythousand": 450,
+        "fiftythousand": 550,
+        "onehundredthousand": 600,
+        "twohundredthousand": 800,
+        "fivehundredthousand": 1200
     }
 }

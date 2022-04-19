@@ -3,7 +3,7 @@
         <div class="py-4 money-page">
             <b-container>
                 <!-- Title-->
-                <h1 class="mb-4 money-title" v-if="show">
+                <h1 class="my-4 money-title" v-if="show">
                     Nhập sinh nhật của bạn hoặc người thương
                 </h1>
 
@@ -23,6 +23,13 @@
                     <BirthdayForm 
                         :data-id="dataID"
                         :other-data-id="otherDataID"
+                        @data="handleData"
+                        @search="searchMoney"
+                    />
+
+                    <!-- Find couple birth year -->
+                    <BirthYearForm
+                        :data-api="coupleDataAPI"
                         @data="handleData"
                         @search="searchMoney"
                     />
@@ -78,6 +85,7 @@
 <script>
 import UpSell from './components/UpSell';
 import BirthdayForm from './components/BirthdayForm';
+import BirthYearForm from './components/BirthYearForm';
 import ResultList from './components/ResultList';
 import OrderInfo from './components/OrderInfo';
 import Footer from './components/Footer';
@@ -106,7 +114,7 @@ const keys = {
 export default {
     name: "App",
     components: {
-        UpSell, BirthdayForm, ResultList, OrderInfo, Footer
+        UpSell, BirthdayForm, BirthYearForm, ResultList, OrderInfo, Footer
     },
 
     data() {
@@ -122,6 +130,7 @@ export default {
             dataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/values/1?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
             otherDataID: '16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw',
             otherDataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw/values/1?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
+            coupleDataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw/values/cặp%20đôi%20năm%20sinh?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
             data: [],
             results: [],
             serialKey: 0,
