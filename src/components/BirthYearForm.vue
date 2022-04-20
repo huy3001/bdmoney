@@ -48,6 +48,9 @@ export default {
 
     data() {
         return {
+            day: null,
+            month: null,
+            year: null,
             firstYear: null,
             secondYear: null,
             years: [{ text: "Năm sinh", value: null }],
@@ -127,18 +130,26 @@ export default {
             // Handle data
             this.$emit('data', this.dataList);
             // Handle search
-            this.$emit('search', this.firstYear.substring(0, 2), this.firstYear.substring(this.firstYear.length - 2), this.secondYear);
+            this.$emit('search', this.day, this.month, this.year);
             // Trigger search twice
             $(event.target).trigger('click');
         }
     },
 
     watch: {
-        month() {
-            // Watch month change and get data base on selected month
-            if (this.month != null) {
-                this.getData(this.dataApi, this.parseData);
-            }
+        firstYear() {
+            // Watch first year change and get parameters for searching
+            if (this.firstYear != null) {
+                this.day = this.firstYear.toString().substring(0, 2);
+                this.month = this.firstYear.toString().substring(this.firstYear.toString().length - 2);
+            } 
+        },
+
+        secondYear() {
+            // Watch second year change and get parameters for searching
+            if (this.secondYear != null) {
+                this.year = this.secondYear;
+            } 
         }
     },
 
