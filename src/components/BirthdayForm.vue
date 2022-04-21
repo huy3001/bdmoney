@@ -1,5 +1,11 @@
 <template>
     <b-row>
+        <b-col cols="12">
+            <h1 class="my-4 money-title">
+                Nhập sinh nhật của bạn hoặc người thương
+            </h1>
+        </b-col>
+
         <b-col cols="12" sm="12" md="4" lg="3">
             <b-form-group id="day-selection">
                 <b-form-select
@@ -57,6 +63,7 @@ export default {
             day: null,
             month: null,
             year: null,
+            type: 'normal',
             days: [{ text: "Ngày", value: null }],
             months: [{ text: "Tháng", value: null }],
             years: [{ text: "Năm", value: null }],
@@ -224,7 +231,7 @@ export default {
             // Handle data
             this.$emit('data', this.dataList);
             // Handle search
-            this.$emit('search', this.day, this.month, this.year);
+            this.$emit('search', this.day, this.month, this.year, this.type);
             // Trigger search twice
             $(event.target).trigger('click');
         }

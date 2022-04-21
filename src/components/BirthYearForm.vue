@@ -51,6 +51,7 @@ export default {
             day: null,
             month: null,
             year: null,
+            type: 'couple',
             firstYear: null,
             secondYear: null,
             years: [{ text: "Năm sinh", value: null }],
@@ -130,7 +131,7 @@ export default {
             // Handle data
             this.$emit('data', this.dataList);
             // Handle search
-            this.$emit('search', this.day, this.month, this.year);
+            this.$emit('search', this.day, this.month, this.year, this.type);
             // Trigger search twice
             $(event.target).trigger('click');
         }
@@ -142,14 +143,28 @@ export default {
             if (this.firstYear != null) {
                 this.day = this.firstYear.toString().substring(0, 2);
                 this.month = this.firstYear.toString().substring(this.firstYear.toString().length - 2);
-            } 
+                // Change type for special couple birth year
+                if (this.secondYear != null && this.firstYear == this.secondYear) {
+                    this.type = 'special';
+                }
+                else {
+                    this.type = 'couple';
+                } 
+            }
         },
 
         secondYear() {
             // Watch second year change and get parameters for searching
             if (this.secondYear != null) {
                 this.year = this.secondYear;
-            } 
+                // Change type for special couple birth year
+                if (this.firstYear != null && this.secondYear == this.firstYear) {
+                    this.type = 'special';
+                }
+                else {
+                    this.type = 'couple';
+                }
+            }
         }
     },
 

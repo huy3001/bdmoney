@@ -22,8 +22,12 @@
 <script>
 import axios from 'axios';
 
+// URL, domain and path name of the site
+const sitePath = window.location.pathname;
+const siteUrl = window.location.href;
+const siteDomain = sitePath == '/' ? siteUrl : siteUrl.replace(sitePath, '');
 // URL of upsell file
-const upSellUrl = window.location.href + 'upsell.json';
+const upSellUrl = siteDomain + '/upsell.json';
 
 export default {
     name: "UpSell",

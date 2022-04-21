@@ -33,12 +33,15 @@
                 <b-img :id="result.money + index" width="700" height="337" src="./images/200000d.jpg" fluid alt="2000000d" v-if="result.money == '200'"></b-img>
                 <b-img class="money-image" width="700" height="337" src="./images/200000d.jpg" fluid alt="200000d" v-if="result.money == '200'"></b-img>
 
-                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'}]" :key="serialKey">
+                <b-img :id="result.money + index" width="700" height="337" src="./images/500000d.jpg" fluid alt="5000000d" v-if="result.money == '500'"></b-img>
+                <b-img class="money-image" width="700" height="337" src="./images/500000d.jpg" fluid alt="500000d" v-if="result.money == '500'"></b-img>
+
+                <span :class="['money-serial', {'money-serial-vertical': result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'  || result.money == '500'}]" :key="serialKey">
                     <span class="money-serial-text">{{ result.seri }}</span>
                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                 </span>
                 
-                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'" :key="serialKey + 1">
+                <span :class="['money-serial-second', {'money-serial-horizontal': result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'  || result.money == '500'}]" v-if="result.money == '5' || result.money == '10' || result.money == '20' || result.money == '50' || result.money == '100' || result.money == '200'  || result.money == '500'" :key="serialKey + 1">
                     <span class="money-serial-text">{{ result.seri }}</span>
                     <span class="money-serial-number">{{ result.day + result.month + result.year }}</span>
                 </span>

@@ -2,11 +2,6 @@
     <div id="app">
         <div class="py-4 money-page">
             <b-container>
-                <!-- Title-->
-                <h1 class="my-4 money-title" v-if="show">
-                    Nhập sinh nhật của bạn hoặc người thương
-                </h1>
-
                 <!-- Success block -->
                 <b-row>
                     <b-col cols="12">
@@ -25,6 +20,7 @@
                         :other-data-id="otherDataID"
                         @data="handleData"
                         @search="searchMoney"
+                        v-if="searchByDate"
                     />
 
                     <!-- Find couple birth year -->
@@ -32,6 +28,7 @@
                         :data-api="coupleDataAPI"
                         @data="handleData"
                         @search="searchMoney"
+                        v-if="searchByCouple"
                     />
 
                     <!-- Messages -->
@@ -93,8 +90,12 @@ import axios from 'axios';
 import {google} from 'googleapis';
 import {auth} from 'google-auth-library';
 
+// URL, domain and path name of the site
+const sitePath = window.location.pathname;
+const siteUrl = window.location.href;
+const siteDomain = sitePath == '/' ? siteUrl : siteUrl.replace(sitePath, '');
 // URL of info file
-const infoUrl = window.location.href + 'info.json';
+const infoUrl = siteDomain + '/info.json';
 // Google sheets instance
 const sheets = google.sheets('v4');
 // Credentials
@@ -139,7 +140,9 @@ export default {
             dataMissing: false,
             infoMissing: false,
             infoMessage: false,
-            successMessage: false
+            successMessage: false,
+            searchByDate: false,
+            searchByCouple: false
         };
     },
 
@@ -164,7 +167,22 @@ export default {
             this.data = dataList;
         },
 
-        searchMoney(day, month, year) {
+        searchMoney(day, month, year, type) {
+            // Get price info
+            let priceInfo;
+
+            // Change price info base on type of searching
+            switch(type) {
+                case 'couple':
+                    priceInfo = this.info.coupleprice;
+                    break;
+                case 'special':
+                    priceInfo = this.info.specialprice;
+                    break;
+                default:
+                    priceInfo = this.info.price;
+            }
+            
             if (day == null || month == null || year == null) {
                 // Show alert
                 this.alert = true;
@@ -205,31 +223,31 @@ export default {
                                 // Set price for each money
                                 switch(item.money) {
                                     case '0.5':
-                                        itemPrice = this.info.price.fivehundred;
+                                        itemPrice = priceInfo.fivehundred;
                                         break;
                                     case '1':
-                                        itemPrice = this.info.price.onethousand;
+                                        itemPrice = priceInfo.onethousand;
                                         break;
                                     case '2':
-                                        itemPrice = this.info.price.twothousand;
+                                        itemPrice = priceInfo.twothousand;
                                         break;
                                     case '5':
-                                        itemPrice = this.info.price.fivethousand;
+                                        itemPrice = priceInfo.fivethousand;
                                         break;
                                     case '10':
-                                        itemPrice = this.info.price.tenthousand;
+                                        itemPrice = priceInfo.tenthousand;
                                         break;
                                     case '20':
-                                        itemPrice = this.info.price.twentythousand;
+                                        itemPrice = priceInfo.twentythousand;
                                         break;
                                     case '50':
-                                        itemPrice = this.info.price.fiftythousand;
+                                        itemPrice = priceInfo.fiftythousand;
                                         break;
                                     case '100':
-                                        itemPrice = this.info.price.onehundredthousand;
+                                        itemPrice = priceInfo.onehundredthousand;
                                         break;
                                     case '200':
-                                        itemPrice = this.info.price.twohundredthousand;
+                                        itemPrice = priceInfo.twohundredthousand;
                                         break;
                                     default:
                                         itemPrice = this.price;
@@ -517,6 +535,18 @@ export default {
                     })
                 })
             }, 200);
+        },
+
+        searchByType() {
+            let urlPath = sitePath.replace('/', '');
+            if (urlPath != '' && urlPath == 'capdoi') {
+                this.searchByDate = false;
+                this.searchByCouple = true;
+            }
+            else {
+                this.searchByDate = true;
+                this.searchByCouple = false;
+            }
         }
     },
 
@@ -549,6 +579,8 @@ export default {
     mounted() {
         // Get info
         this.getInfo();
+        // Search by type of parameter
+        this.searchByType();
         // Load facebook script
         this.loadFacebookScript();
     }
