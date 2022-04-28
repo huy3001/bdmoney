@@ -168,44 +168,17 @@ export default {
         },
 
         searchMoney(day, month, year, type) {
+            let self = this;
+
             // Get price info
             let priceInfo;
 
-            // Change price info base on type of searching
-            switch(type) {
-                case 'couple':
-                    priceInfo = this.info.coupleprice;
-                    break;
-                case 'special':
-                    priceInfo = this.info.specialprice;
-                    break;
-                default:
-                    priceInfo = this.info.price;
-            }
-            
-            if (day == null || month == null || year == null) {
-                // Show alert
-                this.alert = true;
-            }
-            else {
-                let selectedDay = parseInt(day) < 10 ? day.replace('0', '') : day,
-                    selectedMonth = parseInt(month) < 10 ? month.replace('0', '') : month,
-                    selectedDate = selectedDay.toString() + selectedMonth.toString(),
-                    selectedYear = year;
-
-                // Hide alert
-                this.alert = false;
-
-                // Change serial key
-                this.serialKey +=1;
-
+            // Handle search money
+            function handleSearch(selectedDate, selectedYear, resultList) {
                 // Find birthday in data
-                let itemDay, itemMonth, itemDate, itemYear, itemPrice, result, resultList = [];
+                let itemDay, itemMonth, itemDate, itemYear, itemPrice, result;
 
-                // Reset result list
-                resultList.length = 0;
-
-                this.data.forEach((item) => {
+                self.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
                         itemDay = item.day.replace('0', '');
                     }
@@ -249,6 +222,9 @@ export default {
                                     case '200':
                                         itemPrice = priceInfo.twohundredthousand;
                                         break;
+                                    case '500':
+                                        itemPrice = priceInfo.fivehundredthousand;
+                                        break;
                                     default:
                                         itemPrice = this.price;
                                 }
@@ -277,6 +253,51 @@ export default {
                         })
                     }
                 })
+            }
+
+            // Change price info base on type of searching
+            switch(type) {
+                case 'couple':
+                    priceInfo = this.info.coupleprice;
+                    break;
+                case 'special':
+                    priceInfo = this.info.specialprice;
+                    break;
+                default:
+                    priceInfo = this.info.price;
+            }
+            
+            if (day == null || month == null || year == null) {
+                // Show alert
+                this.alert = true;
+            }
+            else {
+                let selectedDay = parseInt(day) < 10 ? day.replace('0', '') : day,
+                    selectedMonth = parseInt(month) < 10 ? month.replace('0', '') : month,
+                    selectedDate = selectedDay.toString() + selectedMonth.toString(),
+                    selectedYear = year;
+
+                // Hide alert
+                this.alert = false;
+
+                // Change serial key
+                this.serialKey +=1;
+
+                // Create and reset result list
+                let resultList = [];
+                resultList.length = 0;
+
+                // Handle search money base on type of searching
+                if (type == 'couple') {
+                    handleSearch(selectedDate, selectedYear, resultList);
+                    // Handle search with reverse birthday
+                    let reverseSelectedDate = year.toString(),
+                        reverseSelectedYear = parseInt(day + month);
+                    handleSearch(reverseSelectedDate, reverseSelectedYear, resultList);
+                }
+                else {
+                    handleSearch(selectedDate, selectedYear, resultList);
+                }
 
                 // Show or hide message when result is empty or not
                 let timeoutFunction = null;
