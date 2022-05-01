@@ -6,20 +6,6 @@
         "id": "1uCn1fcifyUBmhz8loC9sD2TZbpRuPiUWtCeCK6Lrqkw",
         "range": "Đơn hàng"
     },
-    "bank": {
-        "Vietcombank": {
-            "name": "Vietcombank",
-            "logo": "./images/vietcombank.jpg",
-            "account": "Phùng Văn Hùng",
-            "number": "0011003279891"
-        },
-        "Techcombank" : {
-            "name": "Techcombank",
-            "logo": "./images/techcombank.jpg",
-            "account": "Phùng Văn Hùng",
-            "number": "19024297515885"
-        }
-    },
     "shop": {
         "name": "www.TienSinhNhat.vn",
         "slogan": "Tiền Sinh Nhật - Món Quà Nhỏ, Ý Nghĩa Lớn",
@@ -33,14 +19,30 @@
         "link": "https://www.facebook.com/TienSinhNhat.vn"
     },
     "price": {
-        "fivehundred": 119,
+        "fivehundred": 169,
         "onethousand": 99,
-        "twothousand": 109,
-        "fivethousand": 119,
-        "tenthousand": 179,
-        "twentythousand": 199,
-        "fiftythousand": 239,
+        "twothousand": 139,
+        "fivethousand": 169,
+        "tenthousand": 229,
+        "twentythousand": 269,
+        "fiftythousand": 329,
         "onehundredthousand": 399,
         "twohundredthousand": 499
+    },
+    "coupleprice": {
+        "tenthousand": 250,
+        "twentythousand": 220,
+        "fiftythousand": 250,
+        "onehundredthousand": 300,
+        "twohundredthousand": 400,
+        "fivehundredthousand": 800
+    },
+    "specialprice": {
+        "tenthousand": 500,
+        "twentythousand": 450,
+        "fiftythousand": 550,
+        "onehundredthousand": 600,
+        "twohundredthousand": 800,
+        "fivehundredthousand": 1200
     }
 }

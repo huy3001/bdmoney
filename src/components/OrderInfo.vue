@@ -7,8 +7,6 @@
 
             <b-alert show variant="danger" v-if="dataMissing">
                 <p class="mb-0" v-if="selected.length == 0">Bạn phải chọn ít nhất 1 tờ tiền</p>
-                <p class="mb-0" v-if="payment == ''">Vui lòng chọn hình thức thanh toán</p>
-                <p class="mb-0" v-if="payment != '' && bank == ''">Bạn cần chọn ngân hàng để chuyển khoản</p>
                 <p class="mb-0" v-if="infoMissing">Vui lòng điền họ tên, số điện thoại và địa chỉ nhận hàng</p>
             </b-alert>
         </b-col>
@@ -28,8 +26,8 @@
 
                 <b-list-group-item>
                     <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
-                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
-                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 3">( Mua từ 3 tờ trở lên free ship )</span>
+                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 2">( Bạn đã được free ship )</span>
                 </b-list-group-item>
 
                 <b-list-group-item>
@@ -37,37 +35,7 @@
                 </b-list-group-item>
 
                 <b-list-group-item>
-                    <!-- <span>Hình thức thanh toán:</span> -->
-
-                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash"> -->
-                        <span class="money-payment-text">Thanh toán khi nhận hàng</span>
-                    <!-- </b-form-radio> -->
-
-                    <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
-                        <span class="money-payment-text">Chuyển khoản trước (Miễn phí ship)</span>
-                        <p class="my-2 text-secondary money-payment-note" v-if="payment == 'bank'">Nội dung chuyển khoản: Tên + SDT đặt hàng</p>
-                    </b-form-radio>
-
-                    <b-card no-body class="d-flex my-2 money-payment-bank" v-if="payment == 'bank'">
-                        <b-form-radio 
-                            v-for="(item, index) in info.bank"
-                            :key="index"
-                            class="p-4 pl-0 money-bank" 
-                            v-model="bank" 
-                            name="bank-transfer" 
-                            :value="item.name"
-                        >
-                            <b-img :class="['border', {'border-success': bank == item.name}, 'money-bank-logo']" width="200" height="200" :src="item.logo" fluid :alt="item.name"></b-img>
-
-                            <p class="mb-0 mt-2 money-bank-info" v-if="bank == item.name">
-                                {{ item.account }}
-                                <br>
-                                {{ item.name }}
-                                <br>
-                                {{ item.number }}
-                            </p>
-                        </b-form-radio>
-                    </b-card> -->
+                    <span class="money-payment-text">Thanh toán khi nhận hàng</span>
                 </b-list-group-item>
 
                 <b-list-group-item>
@@ -120,7 +88,6 @@ export default {
         infoMissing: Boolean,
         selected: Array,
         payment: String,
-        bank: String,
         ship: Number
     },
 
@@ -159,3 +126,59 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+    .money {
+        &-ship-note {
+            font-size: 70%;
+
+            @media (min-width: 768px) {
+                font-size: 80%;
+            }
+        }
+
+        &-payment {
+            &-text {
+                font-size: 90%;
+
+                @media (min-width: 768px) {
+                    font-size: 100%;
+                }
+            }
+
+            &-note {
+                font-size: 70%;
+
+                @media (min-width: 768px) {
+                    font-size: 80%;
+                }
+            }
+        }
+
+        &-order {
+            .form-control {
+                border: none;
+                color: #000000;
+                height: 1.5rem;
+                padding: 0;
+
+                &::-webkit-input-placeholder,
+                &:-moz-placeholder,
+                &::-moz-placeholder,
+                &:-ms-input-placeholder {
+                    color: #000000;
+                }
+
+                &:focus {
+                    box-shadow: none;
+                }
+            }
+
+            textarea {
+                &.form-control {
+                    height: auto;
+                }
+            }
+        }
+    }
+</style>

@@ -62,7 +62,6 @@
                         :info-missing="infoMissing"
                         :selected="selected"
                         :payment="payment"
-                        :bank="bank"
                         :ship="ship"
                         @post="postData"
                     />
@@ -115,7 +114,6 @@ export default {
             info: null,
             selected: [],
             payment: 'cash',
-            bank: 'bank',
             price: 99,
             ship: 30,
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
@@ -305,11 +303,6 @@ export default {
             if (this.payment == 'cash') {
                 paymentMethod = 'Tiền mặt khi nhận hàng';
             }
-            else {
-                if (this.bank != '') {
-                    paymentMethod = 'Chuyển khoản ' + this.bank;
-                }
-            }
 
             // Gather all form value into an array
             let formValue = [
@@ -392,7 +385,7 @@ export default {
             }
 
             // Check data is not empty and post
-            if (this.selected.length > 0 && this.payment != '' && this.bank != '' && name != '' && phone != '' && address != '') {
+            if (this.selected.length > 0 && this.payment != '' && name != '' && phone != '' && address != '') {
                 this.dataMissing = false;
                 // Show success message
                 this.successMessage = true;
@@ -417,8 +410,6 @@ export default {
         onReset() {
             // Reset data
             this.selected = [];
-            // this.payment = '';
-            // this.bank = '';
             this.results = [];
             this.alert = false;
             this.empty = false;
@@ -514,25 +505,11 @@ export default {
     watch: {
         selected() {
             // Watch selected change and update ship fee
-            if (this.selected.length > 1) {
+            if (this.selected.length > 2) {
                 this.ship = 0
             }
             else {
                 this.ship = 30
-            }
-        },
-
-        payment() {
-            // Watch payment change and update ship fee
-            if (this.payment == 'bank') {
-                this.bank = '';
-                this.ship = 0;
-            }
-            else {
-                this.bank = this.payment;
-                if (this.selected.length < 2) {
-                    this.ship = 30
-                }
             }
         }
     },
@@ -1013,34 +990,6 @@ export default {
 
             @media (min-width: 768px) {
                 font-size: 80%;
-            }
-        }
-
-        &-bank {
-            flex-flow: row nowrap;
-        }
-    }
-
-    &-bank {
-        &-logo {
-            @media (min-width: 768px) {
-                max-width: 125px;
-            }
-        }
-
-        &-info {
-            font-size: 90%;
-
-            @media (min-width: 768px) {
-                font-size: 100%;
-            }
-        }
-
-        .custom-control-label {
-            &::before,
-            &::after {
-                left: .5rem;
-                top: .5rem;
             }
         }
     }
