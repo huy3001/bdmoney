@@ -559,8 +559,8 @@ export default {
         },
 
         searchByType() {
-            let urlPath = sitePath.replace('/', '');
-            if (urlPath != '' && urlPath == 'capdoi') {
+            let siteHostName = window.location.hostname;
+            if (siteHostName == 'capdoi.tiensinhnhat.vn') {
                 this.searchByDate = false;
                 this.searchByCouple = true;
             }
