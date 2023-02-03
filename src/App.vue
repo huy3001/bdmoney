@@ -178,6 +178,21 @@ export default {
                 // Find birthday in data
                 let itemDay, itemMonth, itemDate, itemYear, itemPrice, result;
 
+                function setResult(day, month, year, money, price, seri) {
+                    // Create result object
+                    result = {
+                        'day': day,
+                        'month': month,
+                        'year': year,
+                        'money': money,
+                        'price':price,
+                        'seri': seri
+                    }
+
+                    // Push result into result list
+                    resultList.push(result);
+                }
+
                 self.data.forEach((item) => {
                     if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
                         itemDay = item.day.replace('0', '');
@@ -190,67 +205,64 @@ export default {
                     itemDate = itemDay + itemMonth;
 
                     if (itemDate == selectedDate) {
-                        item.year.forEach((value) => {
-                            itemYear = parseInt(value);
-                            if (itemYear == selectedYear) {
-                                // Set price for each money
-                                switch(item.money) {
-                                    case '0.5':
-                                        itemPrice = priceInfo.fivehundred;
-                                        break;
-                                    case '1':
-                                        itemPrice = priceInfo.onethousand;
-                                        break;
-                                    case '2':
-                                        itemPrice = priceInfo.twothousand;
-                                        break;
-                                    case '5':
-                                        itemPrice = priceInfo.fivethousand;
-                                        break;
-                                    case '10':
-                                        itemPrice = priceInfo.tenthousand;
-                                        break;
-                                    case '20':
-                                        itemPrice = priceInfo.twentythousand;
-                                        break;
-                                    case '50':
-                                        itemPrice = priceInfo.fiftythousand;
-                                        break;
-                                    case '100':
-                                        itemPrice = priceInfo.onehundredthousand;
-                                        break;
-                                    case '200':
-                                        itemPrice = priceInfo.twohundredthousand;
-                                        break;
-                                    case '500':
-                                        itemPrice = priceInfo.fivehundredthousand;
-                                        break;
-                                    default:
-                                        itemPrice = this.price;
-                                }
+                        // Set price for each money
+                        switch(item.money) {
+                            case '0.5':
+                                itemPrice = priceInfo.fivehundred;
+                                break;
+                            case '1':
+                                itemPrice = priceInfo.onethousand;
+                                break;
+                            case '2':
+                                itemPrice = priceInfo.twothousand;
+                                break;
+                            case '5':
+                                itemPrice = priceInfo.fivethousand;
+                                break;
+                            case '10':
+                                itemPrice = priceInfo.tenthousand;
+                                break;
+                            case '20':
+                                itemPrice = priceInfo.twentythousand;
+                                break;
+                            case '50':
+                                itemPrice = priceInfo.fiftythousand;
+                                break;
+                            case '100':
+                                itemPrice = priceInfo.onehundredthousand;
+                                break;
+                            case '200':
+                                itemPrice = priceInfo.twohundredthousand;
+                                break;
+                            case '500':
+                                itemPrice = priceInfo.fivehundredthousand;
+                                break;
+                            default:
+                                itemPrice = this.price;
+                        }
 
-                                // Update month for polymer cash 
-                                if (parseInt(item.money) >= 10 && parseInt(item.month) < 10) {
-                                    itemMonth = '0' + item.month;
-                                }
-                                else {
-                                    itemMonth = item.month
-                                }
+                        // Update month for polymer cash 
+                        if (parseInt(item.money) >= 10 && parseInt(item.month) < 10) {
+                            itemMonth = '0' + item.month;
+                        }
+                        else {
+                            itemMonth = item.month
+                        }
 
-                                // Create result object
-                                result = {
-                                    'day': item.day,
-                                    'month': itemMonth,
-                                    'year': selectedYear,
-                                    'money': item.money,
-                                    'price': itemPrice,
-                                    'seri': item.seri
-                                }
-
-                                // Push result into result list
-                                resultList.push(result);
+                        // Get result for item has many years
+                        if (item.year != null) {
+                            if (typeof item.year == 'object') {
+                                item.year.forEach((value) => {
+                                    itemYear = parseInt(value);
+                                    if (itemYear == selectedYear) {
+                                        setResult(item.day, itemMonth, selectedYear, item.money, itemPrice, item.seri);
+                                    }
+                                })
                             }
-                        })
+                            else {
+                                setResult(item.day, itemMonth, selectedYear, item.money, itemPrice, item.seri);
+                            }
+                        }
                     }
                 })
             }
