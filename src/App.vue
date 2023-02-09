@@ -6,8 +6,8 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <b-nav-item href="/">Năm sinh</b-nav-item>
-                    <b-nav-item href="/capdoi">Cặp đôi</b-nav-item>
+                    <b-nav-item to="/" @click="searchByType">Năm sinh</b-nav-item>
+                    <b-nav-item to="/capdoi" @click="searchByType">Cặp đôi</b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
@@ -584,7 +584,7 @@ export default {
         },
 
         searchByType() {
-            let urlPath = sitePath.replace('/', '');
+            let urlPath = window.location.pathname.replace('/', '');
             if (urlPath != '' && urlPath == 'capdoi') {
                 this.searchByDate = false;
                 this.searchByCouple = true;
@@ -593,6 +593,8 @@ export default {
                 this.searchByDate = true;
                 this.searchByCouple = false;
             }
+            // Reset data
+            this.onReset();
         }
     },
 
