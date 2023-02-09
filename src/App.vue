@@ -1,5 +1,18 @@
 <template>
-    <div id="app">
+    <div id="app" class="pt-5">
+        <!-- Navigation -->
+        <b-navbar toggleable="lg" type="dark" variant="dark" fixed="top">
+            <b-navbar-brand href="/">Tiền sinh nhật</b-navbar-brand>
+            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+            <b-collapse id="nav-collapse" is-nav>
+                <b-navbar-nav>
+                    <b-nav-item href="/">Năm sinh</b-nav-item>
+                    <b-nav-item href="/capdoi">Cặp đôi</b-nav-item>
+                </b-navbar-nav>
+            </b-collapse>
+        </b-navbar>
+
+        <!-- Money page -->
         <div class="py-4 money-page">
             <b-container>
                 <!-- Success block -->
@@ -586,7 +599,7 @@ export default {
     watch: {
         selected() {
             // Watch selected change and update ship fee
-            if (this.selected.length > 1) {
+            if (this.selected.length > 2) {
                 this.ship = 0
             }
             else {
@@ -602,7 +615,7 @@ export default {
             }
             else {
                 this.bank = this.payment;
-                if (this.selected.length < 2) {
+                if (this.selected.length < 3) {
                     this.ship = 30
                 }
             }

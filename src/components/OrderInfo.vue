@@ -28,8 +28,8 @@
 
                 <b-list-group-item>
                     <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
-                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 2">( Mua từ 2 tờ trở lên free ship )</span>
-                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 1">( Bạn đã được free ship )</span>
+                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 3">( Mua từ 3 tờ trở lên free ship )</span>
+                    <span class="text-secondary money-ship-note ml-2" v-if="selected.length > 2">( Bạn đã được free ship )</span>
                 </b-list-group-item>
 
                 <b-list-group-item>
