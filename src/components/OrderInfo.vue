@@ -13,19 +13,13 @@
             </b-alert>
         </b-col>
 
-        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" v-if="infoMessage">
-            <b-list-group class="text-left mb-3 money-order">
-                <b-list-group-item>
-                    <span class="mr-1">Bạn đã chọn:</span>
-                    <span 
-                        class="d-inline-block m-1 p-1 bg-dark text-white rounded money-series"
-                        v-for="(item, index) in selected" 
-                        :key="index"
-                    >
-                        {{ item.money }}
-                    </span>    
-                </b-list-group-item>
+        <b-col cols="12" sm="12" md="8" offset-md="2" lg="6" offset-lg="3" class="money-order" v-if="infoMessage">
+            <b-card no-body class="text-left mb-3 p-2" v-if="selected.length > 0">
+                <b-card-text class="font-weight-bold text-center">Bạn đã chọn</b-card-text>
+                <b-table striped :fields="columns" :items="items"></b-table>
+            </b-card>
 
+            <b-list-group class="text-left">
                 <b-list-group-item>
                     <span class="money-ship">Phí ship: {{ ship | currencyFormat }}</span>
                     <span class="text-secondary money-ship-note ml-2" v-if="selected.length < 3">( Mua từ 3 tờ trở lên free ship )</span>
@@ -37,10 +31,10 @@
                 </b-list-group-item>
 
                 <b-list-group-item>
-                    <!-- <span>Hình thức thanh toán:</span> -->
+                    <span class="mr-1">Thanh toán:</span>
 
                     <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="cash"> -->
-                        <span class="money-payment-text">Thanh toán khi nhận hàng</span>
+                        <span class="money-payment-text">Khi nhận hàng</span>
                     <!-- </b-form-radio> -->
 
                     <!-- <b-form-radio class="mt-3 money-payment" v-model="payment" name="payment-method" value="bank">
@@ -128,7 +122,20 @@ export default {
         return {
             name: '',
             phone: '',
-            address: ''
+            address: '',
+            columns: [
+                {
+                    key: 'seri',
+                },
+                {
+                    key: 'type',
+                    label: 'Tờ tiền'
+                },
+                {
+                    key: 'price',
+                    label: 'Giá'
+                }
+            ]
         }
     },
 
@@ -139,6 +146,20 @@ export default {
     },
 
     computed: {
+        items() {
+            let items = [];
+            if (this.selected.length > 0) {
+                this.selected.forEach((value) => {
+                    items.push({
+                        seri: value.seri,
+                        type: value.type,
+                        price: value.price + 'k'
+                    })
+                });
+            }
+            return items;
+        },
+
         total() {
             let total = 0, selectedPrice = 0;
             // Calculate total price
