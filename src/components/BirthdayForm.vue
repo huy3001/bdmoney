@@ -54,8 +54,7 @@ import $ from 'jquery';
 export default {
     name: "BirthdayForm",
     props: {
-        dataId: String,
-        otherDataId: String
+        dataId: String
     },
 
     data() {
@@ -109,6 +108,7 @@ export default {
 
         // Parse data from API
         parseData(entries) {
+            var self = this;
             // Reset data list
             this.dataList.length = 0;
 
@@ -116,79 +116,34 @@ export default {
             var entry = {};
             entries.forEach((item, index) => {
                 if (index != 0) {
-                    let year = [];
+                    let entryDay = item[0].replace(/\D+/g, '');
+                    let entryMonth = item[1].replace(/\D+/g, '');
+                    let entryYear = [];
+                    let entryMoney = item[2].replace(/[a-zA-Z]|\s+/g, '');
+                    let entrySeri = item[3].replace(/\s+/g, '');
 
                     item.forEach((value, index) => {
                         if (value != '' && index > 3) {
-                            year.push(value.replace(/\D+/g, ''));
+                            entryYear.push(value.replace(/\D+/g, ''));
                         }
                     })
 
-                    entry = {
-                        'day': item[0].replace(/\D+/g, ''),
-                        'month': item[1].replace(/\D+/g, ''),
-                        'year': year,
-                        'money': item[2].replace(/[a-zA-Z]|\s+/g, ''),
-                        'seri': item[3].replace(/\s+/g, ''),
+                    if (entryDay == self.day) {
+                        entry = {
+                            'source': 'hb',
+                            'day': entryDay,
+                            'month': entryMonth,
+                            'year': entryYear,
+                            'money': entryMoney,
+                            'seri': entrySeri,
+                        }
+                        
+                        // Push entry into the data list
+                        this.dataList.push(entry);
                     }
-                    
-                    // Push entry into the data list
-                    this.dataList.push(entry);
                 }
             })
         },
-
-        // Parse other data from API
-        // parseOtherData(entries) {
-        //     var self = this;
-        //     // Get other entry from entries
-        //     var otherEntry = {};
-        //     entries.forEach((item, index) => {
-        //         if (index != 0) {
-        //             let date = item[0].replace(/\D+/g, '');
-        //             let day, month = null;
-        //             let year = [];
-
-        //             if (parseInt(self.month) < 10) {
-        //                 day = date.substring(0, 2);
-        //                 month = date.substring(date.length - 1);
-        //             }
-        //             else {
-        //                 if (date.length < 4) {
-        //                     day = date.substring(0, 1);
-        //                 }
-        //                 else {
-        //                     day = date.substring(0, 2);
-        //                 }
-        //                 month = date.substring(date.length - 2);
-        //             }
-
-        //             item.forEach((value, index) => {
-        //                 if (value != '' && index > 2) {
-        //                     value = value.replace(/\D+/g, '');
-        //                     // Define years are 2k or 19xx and push to array
-        //                     if (parseInt(value) < 51) {
-        //                         year.push(parseInt(value) + 2000);
-        //                     }
-        //                     else {
-        //                         year.push(parseInt(value) + 1900);
-        //                     }
-        //                 }
-        //             })
-
-        //             otherEntry = {
-        //                 'day': day,
-        //                 'month': month,
-        //                 'year': year,
-        //                 'money': item[1].replace(/[a-zA-Z]|\s+/g, ''),
-        //                 'seri': item[2] != undefined ? item[2].replace(/\s+/g, '') : '',
-        //             }
-                    
-        //             // Push entry into the data list
-        //             this.dataList.push(otherEntry);
-        //         }
-        //     })
-        // },
 
         getAPI(apiID, apiTab) {
             return 'https://sheets.googleapis.com/v4/spreadsheets/' + apiID + '/values/' + apiTab + '?alt=json&key=' + this.apiKey;
@@ -229,11 +184,11 @@ export default {
 
         getDataFromApi() {
             var self = this;
-            // Get data entry from API
+            // Get data entry from another API
             var dataEntry = {};
             if (this.day != null && this.month != null && this.year != null) {
                 const apiUrl = 'https://api.khotiennamsinh.com/api/money?query=' + this.day + '/' + this.month + '/' + this.year + '&saleStatus=available';
-                // Fetch data from API
+                // Fetch data from another API
                 axios.get(apiUrl)
                 .then(function(response) {
                     response.data.data.list.forEach((item) => {
@@ -256,6 +211,7 @@ export default {
                         }
 
                         dataEntry = {
+                            'source': 'da',
                             'day': day,
                             'month': month,
                             'year': year,
@@ -300,11 +256,6 @@ export default {
                     this.secondDataAPI = this.getAPI(this.dataId, this.dataTab.second);
                     // Get multiple data
                     this.getMultipleData(this.fisrtDataAPI, this.secondDataAPI, this.parseData);
-                    // Update other data APIs
-                    // this.fisrtOtherDataAPI = this.getAPI(this.otherDataId, this.dataTab.fisrt);
-                    // this.secondOtherDataAPI = this.getAPI(this.otherDataId, this.dataTab.second);
-                    // Get multiple data
-                    // this.getMultipleData(this.fisrtOtherDataAPI, this.secondOtherDataAPI, this.parseOtherData);
                 }
                 else {
                     // Update data tab
@@ -313,10 +264,6 @@ export default {
                     this.dataAPI = this.getAPI(this.dataId, this.dataTab);
                     // Get data
                     this.getData(this.dataAPI, this.parseData);
-                    // Update other data API
-                    // this.otherDataAPI = this.getAPI(this.otherDataId, this.dataTab);
-                    // Get other data
-                    // this.getData(this.otherDataAPI, this.parseOtherData);
                 }
                 // Get data from API
                 this.getDataFromApi();

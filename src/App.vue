@@ -30,7 +30,6 @@
                     <!-- Choose birthday form -->
                     <BirthdayForm 
                         :data-id="dataID"
-                        :other-data-id="otherDataID"
                         @data="handleData"
                         @search="searchMoney"
                         v-if="searchByDate"
@@ -142,10 +141,12 @@ export default {
             ship: 30,
             dataID: '1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4',
             dataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/1uXf88Ga0zp10odt1ro2nNKep32rp1ZFEKHRfoopPRn4/values/1?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
-            otherDataID: '16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw',
-            otherDataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw/values/1?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
             coupleDataAPI: 'https://sheets.googleapis.com/v4/spreadsheets/16W-W2DjWuj0te5lC9PnmVBOy28rj7mHEhQFkHnKRmKw/values/cặp%20đôi%20năm%20sinh?alt=json&key=AIzaSyCv9aoSSPDOFiXNuTMamA3lz0U19bYqYH0',
             data: [],
+            hbData: [],
+            hbOneData: [],
+            daData: [],
+            daOneData: [],
             results: [],
             serialKey: 0,
             alert: false,
@@ -180,106 +181,118 @@ export default {
             this.data = dataList;
         },
 
-        searchMoney(day, month, year, type) {
+        handleSearch(selectedDate, selectedYear, resultList, type) {
             let self = this;
 
-            // Get price info
-            let priceInfo;
+            // Find birthday in data
+            let itemDay, itemMonth, itemDate, itemYear, itemMoney, itemPrice, itemSeri, result;
 
-            // Handle search money
-            function handleSearch(selectedDate, selectedYear, resultList) {
-                // Find birthday in data
-                let itemDay, itemMonth, itemDate, itemYear, itemPrice, result;
-
-                function setResult(day, month, year, money, price, seri) {
-                    // Create result object
-                    result = {
-                        'day': day,
-                        'month': month,
-                        'year': year,
-                        'money': money,
-                        'price':price,
-                        'seri': seri
-                    }
-
-                    // Push result into result list
-                    resultList.push(result);
+            function setResult(day, month, year, money, price, seri) {
+                // Create result object
+                result = {
+                    'day': day,
+                    'month': month,
+                    'year': year,
+                    'money': money,
+                    'price': price,
+                    'seri': seri
                 }
 
-                self.data.forEach((item) => {
-                    if (parseInt(item.day) < 10 || parseInt(item.day) > 31) {
-                        itemDay = item.day.replace('0', '');
+                // Push result into result list
+                resultList.push(result);
+            }
+
+            function setMoney(money, seri, type) {
+                itemMoney = money;
+                itemSeri = seri;
+
+                // Set price for money
+                self.setPrice(type, itemMoney);
+                itemPrice = self.price;
+            }
+
+            function setYear(year) {
+                // Get result for item has many years
+                if (year != null) {
+                    if (typeof year == 'object') {
+                        year.forEach((value) => {
+                            itemYear = parseInt(value);
+                            if (itemYear == selectedYear) {
+                                setResult(itemDay, itemMonth, itemYear, itemMoney, itemPrice, itemSeri);
+                            }
+                        })
                     }
                     else {
-                        itemDay = item.day;
+                        setResult(itemDay, itemMonth, selectedYear, itemMoney, itemPrice, itemSeri);
+                    }
+                }
+            }
+
+            function setDate(day, month, year, money, seri, type) {
+                if (parseInt(day) < 10 || parseInt(day) > 31) {
+                    itemDay = day.replace('0', '');
+                }
+                else {
+                    itemDay = day;
+                }
+
+                itemMonth = month;
+                itemDate = itemDay + itemMonth;
+
+                if (itemDate == selectedDate) {
+                    // Set money
+                    setMoney(money, seri, type);
+
+                    // Update month for polymer cash 
+                    if (parseInt(itemMoney) >= 10 && parseInt(month) < 10) {
+                        itemMonth = '0' + month;
+                    }
+                    else {
+                        itemMonth = month
                     }
 
-                    itemMonth = item.month;
-                    itemDate = itemDay + itemMonth;
+                    // Set year for money
+                    setYear(year);
+                }
+            }
 
-                    if (itemDate == selectedDate) {
-                        // Set price for each money
-                        switch(item.money) {
-                            case '0.5':
-                                itemPrice = priceInfo.fivehundred;
-                                break;
-                            case '1':
-                                itemPrice = priceInfo.onethousand;
-                                break;
-                            case '2':
-                                itemPrice = priceInfo.twothousand;
-                                break;
-                            case '5':
-                                itemPrice = priceInfo.fivethousand;
-                                break;
-                            case '10':
-                                itemPrice = priceInfo.tenthousand;
-                                break;
-                            case '20':
-                                itemPrice = priceInfo.twentythousand;
-                                break;
-                            case '50':
-                                itemPrice = priceInfo.fiftythousand;
-                                break;
-                            case '100':
-                                itemPrice = priceInfo.onehundredthousand;
-                                break;
-                            case '200':
-                                itemPrice = priceInfo.twohundredthousand;
-                                break;
-                            case '500':
-                                itemPrice = priceInfo.fivehundredthousand;
-                                break;
-                            default:
-                                itemPrice = this.price;
-                        }
+            // Get money based on source and money's type
+            this.hbData = this.data.filter((item) => {
+                return item.source == 'hb'
+            })
 
-                        // Update month for polymer cash 
-                        if (parseInt(item.money) >= 10 && parseInt(item.month) < 10) {
-                            itemMonth = '0' + item.month;
-                        }
-                        else {
-                            itemMonth = item.month
-                        }
+            this.hbOneData = this.data.filter((item) => {
+                return item.source == 'hb' && item.money == '1'
+            })
 
-                        // Get result for item has many years
-                        if (item.year != null) {
-                            if (typeof item.year == 'object') {
-                                item.year.forEach((value) => {
-                                    itemYear = parseInt(value);
-                                    if (itemYear == selectedYear) {
-                                        setResult(item.day, itemMonth, selectedYear, item.money, itemPrice, item.seri);
-                                    }
-                                })
-                            }
-                            else {
-                                setResult(item.day, itemMonth, selectedYear, item.money, itemPrice, item.seri);
-                            }
-                        }
+            this.daData = this.data.filter((item) => {
+                return item.source == 'da'
+            })
+
+            this.daOneData = this.data.filter((item) => {
+                return item.source == 'da' && item.money == '1'
+            })
+
+            if (this.hbOneData.length > 0) {
+                this.hbData.forEach((item) => {
+                    setDate(item.day, item.month, item.year, item.money, item.seri, type);
+                })
+
+                this.daData.forEach((item) => {
+                    if (item.money != '1') {
+                        setDate(item.day, item.month, item.year, item.money, item.seri, type);
                     }
                 })
             }
+            else {
+                this.data.forEach((item) => {
+                    setDate(item.day, item.month, item.year, item.money, item.seri, type);
+                })
+            }
+        },
 
+        setPrice(type, money) {
+            let priceInfo;
             // Change price info base on type of searching
             switch(type) {
                 case 'couple':
@@ -291,7 +304,45 @@ export default {
                 default:
                     priceInfo = this.info.price;
             }
-            
+
+            // Set price for each money
+            switch(money) {
+                case '0.5':
+                    this.price = priceInfo.fivehundred;
+                    break;
+                case '1':
+                    this.price = priceInfo.onethousand;
+                    break;
+                case '2':
+                    this.price = priceInfo.twothousand;
+                    break;
+                case '5':
+                    this.price = priceInfo.fivethousand;
+                    break;
+                case '10':
+                    this.price = priceInfo.tenthousand;
+                    break;
+                case '20':
+                    this.price = priceInfo.twentythousand;
+                    break;
+                case '50':
+                    this.price = priceInfo.fiftythousand;
+                    break;
+                case '100':
+                    this.price = priceInfo.onehundredthousand;
+                    break;
+                case '200':
+                    this.price = priceInfo.twohundredthousand;
+                    break;
+                case '500':
+                    this.price = priceInfo.fivehundredthousand;
+                    break;
+                default:
+                    this.price = 99;
+            }
+        },
+
+        searchMoney(day, month, year, type) {
             if (day == null || month == null || year == null) {
                 // Show alert
                 this.alert = true;
@@ -314,14 +365,14 @@ export default {
 
                 // Handle search money base on type of searching
                 if (type == 'couple') {
-                    handleSearch(selectedDate, selectedYear, resultList);
+                    this.handleSearch(selectedDate, selectedYear, resultList);
                     // Handle search with reverse birthday
                     let reverseSelectedDate = year.toString(),
                         reverseSelectedYear = parseInt(day + month);
-                    handleSearch(reverseSelectedDate, reverseSelectedYear, resultList);
+                    this.handleSearch(reverseSelectedDate, reverseSelectedYear, resultList);
                 }
                 else {
-                    handleSearch(selectedDate, selectedYear, resultList);
+                    this.handleSearch(selectedDate, selectedYear, resultList);
                 }
 
                 // Show or hide message when result is empty or not
