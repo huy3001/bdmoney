@@ -243,8 +243,11 @@ export default {
                     // Set money
                     setMoney(money, seri, type);
 
+                    // Update day for serial number
+                    itemDay = day;
+
                     // Update month for polymer cash 
-                    if (parseInt(itemMoney) >= 10 && parseInt(month) < 10) {
+                    if (parseInt(money) >= 10 && parseInt(month) < 10) {
                         itemMonth = '0' + month;
                     }
                     else {
