@@ -1,0 +1,81 @@
+.money {
+  &-ship-note {
+    font-size: 70%;
+
+    @media (min-width: 768px) {
+      font-size: 80%;
+    }
+  }
+
+  &-payment {
+    &-text {
+      font-size: 90%;
+
+      @media (min-width: 768px) {
+        font-size: 100%;
+      }
+    }
+
+    &-note {
+      font-size: 70%;
+
+      @media (min-width: 768px) {
+        font-size: 80%;
+      }
+    }
+
+    &-bank {
+      flex-flow: row nowrap;
+    }
+  }
+
+  &-bank {
+    &-logo {
+      @media (min-width: 768px) {
+        max-width: 125px;
+      }
+    }
+
+    &-info {
+      font-size: 90%;
+
+      @media (min-width: 768px) {
+        font-size: 100%;
+      }
+    }
+
+    .custom-control-label {
+      &::before,
+      &::after {
+        left: 0.5rem;
+        top: 0.5rem;
+      }
+    }
+  }
+
+  &-order {
+    .form-control {
+      border: none;
+      color: #000000;
+      height: 1.5rem;
+      padding: 0;
+
+      &::-webkit-input-placeholder,
+      &:-moz-placeholder,
+      &::-moz-placeholder,
+      &:-ms-input-placeholder {
+        color: #000000;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+
+    textarea {
+      &.form-control {
+        height: auto;
+      }
+    }
+  }
+}
